@@ -14,7 +14,8 @@ function [v,a,distance,theta,omega,torque,torque_lat,torque_motor,power,power_lo
             slips(i) = calc_optimalSlip(v(i-1), os_coefficients);
             f_thrust_wheel(i) = calc_fx(slips(i), v(i-1), fx_lookup_table);
             
-            % Calculate angular velocity and angle of Halbach wheels
+            % Calculate angular velocity and angle of Halbach wheels 
+            % LP: Frequency? Phase?
             omega(i) = (slips(i)+v(i-1))/halbach_wheel_parameters.ro;
             theta(i) = theta(i-1) + omega(i) * dt;
             

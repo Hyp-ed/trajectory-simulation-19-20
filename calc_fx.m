@@ -25,7 +25,7 @@ function fx = calc_fx(slip,vt,fx_lookup_table)
     fx1 = (i_s_max - i_s) / (i_s_max - i_s_min) * fx_lookup_table.forces(i_v_min, i_s_min) + (i_s - i_s_min) / (i_s_max - i_s_min) * fx_lookup_table.forces(i_v_min, i_s_max); % Interpolate along x-axis for y1
     fx2 = (i_s_max - i_s) / (i_s_max - i_s_min) * fx_lookup_table.forces(i_v_max, i_s_min) + (i_s - i_s_min) / (i_s_max - i_s_min) * fx_lookup_table.forces(i_v_max, i_s_max); % Interpolate along x-axis for y2
     fx = (i_v_max - i_v) / (i_v_max - i_v_min) * fx1 + (i_v - i_v_min) / (i_v_max - i_v_min) * fx2; % Interpolate along y-axis between (x, y1) and (x, y2)
-    fx = fx / 2; % Divide by two since the lookup table is for wheel pairs
+    fx = fx / 2; % Divide by two since the lookup table is for wheel pairs LP: Probably needs to be removed
     fx = s * fx;
     
 end
