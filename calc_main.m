@@ -77,9 +77,6 @@ function [v,a,distance,theta,omega,torque,torque_lat,torque_motor,power,power_lo
         f_x_pod(i) = f_thrust_wheel(i)*n_wheel;
     end
     
-    % Calculate lateral force from Halbach wheel and total y force
-    f_lat_wheel(i) = calc_fy(slips(i), v(i-1), halbach_wheel_parameters);
-    f_y_pod(i) = f_lat_wheel(i)*halbach_wheel_parameters.w*n_wheel;
     
     % Calculate acceleration, velocity and distance
     a(i) = f_x_pod(i)/halbach_wheel_parameters.M;
