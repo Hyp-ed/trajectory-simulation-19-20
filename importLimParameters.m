@@ -1,14 +1,15 @@
-function [ Parameter ] = importHalbachWheelParameters()
-%  importHalbachWheelParameters Imports the Halbach wheel parameters
+function [ Parameter ] = importLimParameters()
+%  importLimParameters Imports the Lim parameters
 %  Inputs:
 %  Output: 
 %    [ Parameter ]      Parameter structure containing imported variables
 %  @author              ?, HypED
 %  Modified:            Rafael Anderka 02/11/2018
 %  Modified:            Simona Prokopovic 07/11/2018
+%  Modified:            Lorenzo Principe 12/11/2019
 
     % Set filepath to the excel workbook
-    params_filepath = './Parameters/HalbachWheel_parameters.xlsx';
+    params_filepath = './Parameters/Lim_parameters.xlsx';
 
     % Import spreadsheets using the importSpreadsheet function
     % Input arguments of importSpreadsheet:
