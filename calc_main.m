@@ -20,8 +20,8 @@ function [v,a,distance,theta,omega,torque,torque_lat,torque_motor,power,power_lo
             omega(i) = (slips(i)+v(i-1))/Lim_parameters.ro;
             theta(i) = theta(i-1) + omega(i) * dt;
             
-            % Calculate required angular acceleration and torque LP needed
-            % at all?
+            % Calculate required angular acceleration and torque 
+            % LP needed at all?
             alpha = (omega(i)-omega(i-1))/dt;
             torque(i) = alpha * Lim_parameters.i;
             
