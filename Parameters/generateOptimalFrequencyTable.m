@@ -13,14 +13,14 @@ s_max = fx_lookup_table.slips(end);
 s_step = fx_lookup_table.s_step;
 
 %% Get optimal values
-optimalSlip = zeros(1,length(fx_lookup_table.velocities));
+optimalFrequency = zeros(1,length(fx_lookup_table.velocities));
 optimalRPM = zeros(1,length(fx_lookup_table.velocities));
 
 for i = 1:length(fx_lookup_table.velocities)
-    [~, optimalSlip(i)] = max(fx_lookup_table.smoothForces(i,:));
-    optimalSlip(i) = s_step * (optimalSlip(i)-1);
+    [~, optimalFrequency(i)] = max(fx_lookup_table.smoothForces(i,:));
+    optimalFrequency(i) = s_step * (optimalFrequency(i)-1);
     
-    optimalRPM(i) = ((optimalSlip(i) + fx_lookup_table.velocities(i)) / r) * 60 / (2*pi);
+    optimalRPM(i) = ((optimalFrequency(i) + fx_lookup_table.velocities(i)) / r) * 60 / (2*pi);
 end
 
 %% Plot
@@ -38,13 +38,13 @@ fprintf('%.10f v^2 + %.10f v + %.10f\n',optimalRPMCoefficients(1),optimalRPMCoef
 %{
 figure(2);
 hold on;
-plot(fx_lookup_table.velocities,optimalSlip)
+plot(fx_lookup_table.velocities,optimalFrequency)
 xlabel('Velocity (m/s)')
 ylabel('Slip (m/s)')
 
-optimalSlipCoefficients = polyfit(fx_lookup_table.velocities,optimalSlip,1);
-y = polyval(optimalSlipCoefficients,fx_lookup_table.velocities);
+optimalFrequencyCoefficients = polyfit(fx_lookup_table.velocities,optimalFrequency,1);
+y = polyval(optimalFrequencyCoefficients,fx_lookup_table.velocities);
 plot(fx_lookup_table.velocities,y);
 
-save('optimalSlipCoefficients.mat',"optimalSlipCoefficients");
+save('optimalFrequencyCoefficients.mat',"optimalFrequencyCoefficients");
 %}
