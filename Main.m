@@ -29,7 +29,7 @@ Lim_parameters = importLimParameters();
 fx_lookup_table = load('Parameters/forceLookupTable.mat');              % Thrust force lookup table (net values for a wheel pair)
 pl_lookup_table = load('Parameters/powerLossLookupTable.mat');          % Power loss lookup table (net values for a wheel pair)
 ct_lookup_table = load('Parameters/coggingTorqueLookupTable.mat');      % Interaction torque lookup table (values for a single wheel) LP
-os_coefficients = load('Parameters/optimalSlipCoefficients.mat');       % Optimal slip coefficients
+of_coefficients = load('Parameters/optimalSlipCoefficients.mat');       % Optimal slip coefficients
 
 % Setup parameters
 dt = 1/100;                                                 % Time step (see note above)
@@ -90,7 +90,7 @@ for i = 2:length(time) % Start at i = 2 because values are all init at 1
         % Recalculate previous time = i - 1 to avoid briefly surpassing max RPM
         [v,a,distance,theta,omega,torque,torque_lat,torque_motor,power,power_loss,power_input,efficiency,slips,f_thrust_wheel,f_lat_wheel,f_x_pod,f_y_pod] = ...
         calc_main(phase, i - 1, dt, n_Lim, n_brake, v, a, distance, theta, omega, torque, torque_lat, torque_motor, power, power_loss, power_input, efficiency, slips, ...
-                  f_thrust_wheel, f_lat_wheel, f_x_pod, f_y_pod, Lim_parameters, braking_force, fx_lookup_table, pl_lookup_table, ct_lookup_table, os_coefficients);
+                  f_thrust_wheel, f_lat_wheel, f_x_pod, f_y_pod, Lim_parameters, braking_force, fx_lookup_table, pl_lookup_table, ct_lookup_table, of_coefficients);
     end
     
     % If we have reached the maximum allowed acceleration distance we 
@@ -117,7 +117,7 @@ for i = 2:length(time) % Start at i = 2 because values are all init at 1
     % Calculate for current time = i
     [v,a,distance,theta,omega,torque,torque_lat,torque_motor,power,power_loss,power_input,efficiency,slips,f_thrust_wheel,f_lat_wheel,f_x_pod,f_y_pod] = ...
     calc_main(phase, i, dt, n_Lim, n_brake, v, a, distance, theta, omega, torque, torque_lat, torque_motor, power, power_loss, power_input, efficiency, slips, ...
-              f_thrust_wheel, f_lat_wheel, f_x_pod, f_y_pod, Lim_parameters, braking_force, fx_lookup_table, pl_lookup_table, ct_lookup_table, os_coefficients);
+              f_thrust_wheel, f_lat_wheel, f_x_pod, f_y_pod, Lim_parameters, braking_force, fx_lookup_table, pl_lookup_table, ct_lookup_table, of_coefficients);
     
     fprintf("Step: %i, %.2f s, %.2f m, %.2f m/s, %4.0f RPM, %.2f Nm, %.2f m/s, Phase: %i\n", i, time(i), distance(i), v(i), omega(i) * 60 / (2 * pi), torque_motor(i), slips(i), phase)
     
