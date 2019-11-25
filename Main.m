@@ -29,7 +29,7 @@ Lim_parameters = importLimParameters();
 fx_lookup_table = load('Parameters/forceLookupTable.mat');              % Thrust force lookup table (net values for a wheel pair)
 pl_lookup_table = load('Parameters/powerLossLookupTable.mat');          % Power loss lookup table (net values for a wheel pair)
 ct_lookup_table = load('Parameters/coggingTorqueLookupTable.mat');      % Interaction torque lookup table (values for a single wheel) LP
-of_coefficients = load('Parameters/optimalSlipCoefficients.mat');       % Optimal slip coefficients
+of_coefficients = load('Parameters/optimalFrequencyCoefficients.mat');       % Optimal slip coefficients
 
 % Setup parameters
 dt = 1/100;                                                 % Time step (see note above)
@@ -162,4 +162,4 @@ fprintf('\nMaximum lateral torque: %.2f Nm\n', torque_lat_max);
 fprintf('\nPower per motor: %.2f W\n', max(power_input)/n_Lim);
 
 %% Plot the trajectory graphs
-% plotTrajectory(result);
+plotTrajectory(result);

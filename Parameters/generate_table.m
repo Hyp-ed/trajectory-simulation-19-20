@@ -69,11 +69,11 @@ hold off
 f2=figure('Name','Optimal Frequency')
 scatter(velocities,opt_frequency)
 
-coeffs = polyfit(velocities,opt_frequency,1)
+optimalFrequencyCoefficients = polyfit(velocities,opt_frequency,1)
 
-save('optimalFrequencyCoefficients.mat','coeffs')
+save('optimalFrequencyCoefficients.mat','optimalFrequencyCoefficients')
 
-fit = polyval(coeffs,velocities);
+fit = polyval(optimalFrequencyCoefficients,velocities);
 hold on 
 plot(velocities,fit);
 hold off
