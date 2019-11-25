@@ -1,4 +1,4 @@
-function optimalSlip = calc_optimalSlip(velocity,of_coefficients)
+function optimalFrequency = calc_optimalFrequency(velocity,of_coefficients)
 % CALC_OPTIMALSLIP	Calculates the optimal slip for a given velocity.
-    optimalSlip = polyval(of_coefficients.optimalSlipCoefficients, velocity);
+    optimalFrequency = polyval(of_coefficients.optimalFrequencyCoefficients, velocity);
 end
