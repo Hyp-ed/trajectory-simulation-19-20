@@ -1,11 +1,13 @@
+function [] = generate_table()
 %% Generates a 3D lookup table that converts COMSOL generated csv look-up table into MATLAB matrix
 % @author Lorenzo Principe
 clc; clear; close all;
 
-% Input and output file name variables
-in_file     = '19-11-17_LIMForceTable_Export.xlsx';
-out_table   = 'forceLookupTable.mat';
-out_fig     = 'Forces_surfacePlot.fig';
+% Input and output file name variable
+in_file     = './Parameters/19-11-17_LIMForceTable_Export.xlsx';
+out_table   = './Parameters/forceLookupTable.mat';
+out_coeff_table = './Parameters/optimalSlipsCoefficients.mat';
+out_fig     = './Parameters/Forces_surfacePlot.fig';
 
 
 % Import data
@@ -69,9 +71,10 @@ hold off
 f2=figure('Name','Optimal Frequency')
 scatter(velocities,opt_frequency)
 
+
 optimalFrequencyCoefficients = polyfit(velocities,opt_frequency,1)
 
-save('optimalFrequencyCoefficients.mat','optimalFrequencyCoefficients')
+save(out_coeff_table,'optimalFrequencyCoefficients')
 
 fit = polyval(optimalFrequencyCoefficients,velocities);
 hold on 

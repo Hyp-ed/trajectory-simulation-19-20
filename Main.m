@@ -21,13 +21,16 @@ clear; clc;
 useMaxAccDistance = false;          
 maxAccDistance = 1000;
 
-% Import parameters from './Parameters/HalbachWheel_parameters.xlsx'
+% Import parameters from './Parameters/lim_parameters.xlsx'
 lim_parameters = importLimParameters();
+
+% Generate lookup table
+generate_table()
 
 % Import lookup tables and optimal slip coefficients
 fx_lookup_table = load('Parameters/forceLookupTable.mat');              % Thrust force lookup table (total values of the DSLIM)
 pl_lookup_table = load('Parameters/powerLossLookupTable.mat');          % Power loss lookup table (total values of the DSLIM)
-of_coefficients = load('Parameters/optimalFrequencyCoefficients.mat');  % Optimal frequency coefficients
+of_coefficients = load('Parameters/optimalSlipsCoefficients.mat');      % Optimal frequency coefficients
 
 % Setup parameters
 dt = 1/100;                                                         % Time step (see note above)
@@ -83,7 +86,7 @@ for i = 2:length(time) % Start at i = 2 because values are all init at 1
         state = 3; % Max RPM
         
         % Recalculate previous time = i - 1 to avoid briefly surpassing max RPM
-        [v,a,distance,phase,frequency,torque,torque_lat,torque_motor,power,power_loss,power_input,efficiency,slips,f_thrust_wheel,f_lat_wheel,f_x_pod,f_y_pod] = ...
+        [v,a,distance,phase,frequency,power,power_loss,power_input,efficiency,slips,f_thrust_wheel,f_lat_wheel,f_x_pod,f_y_pod] = ...
         calc_main(state, i - 1, dt, n_lim, n_brake, v, a, distance, phase, frequency, power, power_loss, power_input, efficiency, slips, ...
                   f_thrust_wheel, f_lat_wheel, f_x_pod, f_y_pod, lim_parameters, braking_force, fx_lookup_table, pl_lookup_table, of_coefficients);
     end
@@ -110,11 +113,11 @@ for i = 2:length(time) % Start at i = 2 because values are all init at 1
     
     %% Main calculation
     % Calculate for current time = i
-    [v,a,distance,phase,frequency,torque,torque_lat,torque_motor,power,power_loss,power_input,efficiency,slips,f_thrust_wheel,f_lat_wheel,f_x_pod,f_y_pod] = ...
+    [v,a,distance,phase,frequency,power,power_loss,power_input,efficiency,slips,f_thrust_wheel,f_lat_wheel,f_x_pod,f_y_pod] = ...
     calc_main(state, i, dt, n_lim, n_brake, v, a, distance, phase, frequency, power, power_loss, power_input, efficiency, slips, ...
               f_thrust_wheel, f_lat_wheel, f_x_pod, f_y_pod, lim_parameters, braking_force, fx_lookup_table, pl_lookup_table, of_coefficients);
     
-    fprintf("Step: %i, %.2f s, %.2f m, %.2f m/s, %4.0f RPM, %.2f Nm, %.2f m/s, state: %i\n", i, time(i), distance(i), v(i), frequency(i) * 60 / (2 * pi), torque_motor(i), slips(i), state)
+    fprintf("Step: %i, %.2f s, %.2f m, %.2f m/s, %4.0f RPM, %.2f m/s, state: %i\n", i, time(i), distance(i), v(i), frequency(i) * 60 / (2 * pi), slips(i), state)
     
     %% Stripes
     if (distance(i) >= (1 + stripe_count) * stripe_dist)
