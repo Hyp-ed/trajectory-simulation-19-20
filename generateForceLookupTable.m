@@ -1,4 +1,4 @@
-function fx_lookup_table = generate_table()
+function forceLookupTable = generateForceLookupTable()
 %% Generates a 3D lookup table that converts COMSOL generated csv look-up table into MATLAB matrix
 % @author Lorenzo Principe
 clc; clear; close all;
@@ -93,4 +93,4 @@ if display_figures
     ylabel('Frequency (Hz)')
 end
 
-fx_lookup_table = struct('v_step',v_step,'freq_step',freq_step,'frequencies',frequencies,'velocities',velocities,'forces',forces,'optimalFrequencyCoefficients',optimalFrequencyCoefficients)
+forceLookupTable = struct('vStep',v_step,'freqStep',freq_step,'frequencies',frequencies,'velocities',velocities,'forces',forces,'optimalFrequencyCoefficients',optimalFrequencyCoefficients)
