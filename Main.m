@@ -15,7 +15,7 @@ clear; clc;
 % Load parameters from './config.m'
 parameters = loadParameters();
 
-% Generate lookup tables and optimal slip coefficients from COMSOL input
+% Generate lookup tables and optimal frequency coefficients from COMSOL input
 generate_table()
 
 % Additional parameters
@@ -25,22 +25,22 @@ number_of_stripes = floor(parameters.track_length / parameters.stripe_dist);    
 %% Initialize arrays
 %  Create all necessary arrays and initialize with 0s for each time step. 
 %  This is computationally faster than extending the arrays after each calculation.
-time = 0:dt:tmax;                       % Create time array with time step dt and maximum time tmax
-v = zeros(1,length(time));              % Velocity of pod
-a = zeros(1,length(time));              % Acceleration of pod
-distance = zeros(1,length(time));       % Distance travelled
-phase = zeros(1,length(time));          % Current phase of Lim fields
-frequency = zeros(1,length(time));      % Lim frequency
-power = zeros(1,length(time));          % Power
-power_loss = zeros(1,length(time));     % Power loss
-power_input = zeros(1,length(time));    % Power input
-efficiency = zeros(1,length(time));     % Power output / Power input
-slips = zeros(1,length(time));          % Slip between LIM field and track
-f_thrust_wheel = zeros(1,length(time)); % Thrust force from a single Halbach wheel
-f_lat_wheel = zeros(1,length(time));    % Lateral force from a single Halbach wheel   
-f_x_pod = zeros(1,length(time));        % Net force in direction of track (x) for whole pod
-f_y_pod = zeros(1,length(time));        % Net force in lateral direction (y) for whole pod
-stripes = zeros(1,number_of_stripes);   % Indices at which we detect each stripe
+time = 0:parameters.dt:parameters.max_t;    % Create time array with time step dt and maximum time tmax
+v = zeros(1,length(time));                  % Velocity of pod
+a = zeros(1,length(time));                  % Acceleration of pod
+distance = zeros(1,length(time));           % Distance travelled
+phase = zeros(1,length(time));              % Current phase of Lim fields
+frequency = zeros(1,length(time));          % Lim frequency
+power = zeros(1,length(time));              % Power
+power_loss = zeros(1,length(time));         % Power loss
+power_input = zeros(1,length(time));        % Power input
+efficiency = zeros(1,length(time));         % Power output / Power input
+slips = zeros(1,length(time));              % Slip between LIM field and track
+f_thrust_wheel = zeros(1,length(time));     % Thrust force from a single Halbach wheel
+f_lat_wheel = zeros(1,length(time));        % Lateral force from a single Halbach wheel   
+f_x_pod = zeros(1,length(time));            % Net force in direction of track (x) for whole pod
+f_y_pod = zeros(1,length(time));            % Net force in lateral direction (y) for whole pod
+stripes = zeros(1,number_of_stripes);       % Indices at which we detect each stripe
 
 %% Calculation loop
 %  This is the main loop of the script, caluclating the relevant values for
@@ -49,19 +49,19 @@ stripes = zeros(1,number_of_stripes);   % Indices at which we detect each stripe
 %  variable as the first input argument.
 %  state = 1 -- Acceleration
 %  state = 2 -- Deceleration
-%  state = 3 -- Max RPM
+%  state = 3 -- Max frequency
 
 state = 1;          % We start in the acceleration state
 stripe_count = 0;   % Initially we have counted 0 stripes
 
 % For each point in time ...
 for i = 2:length(time) % Start at i = 2 because values are all init at 1
-    %% state transitions
+    %% State transitions
     % If we have exceeded the max. RPM we cap the RPM and recalculate
     if (frequency(i-1) * 60 / (2 * pi)) > parameters.mass_rpm
-        state = 3; % Max RPM
+        state = 3; % Max frequency
         
-        % Recalculate previous time = i - 1 to avoid briefly surpassing max RPM
+        % Recalculate previous time = i - 1 to avoid briefly surpassing max frequency
         [v,a,distance,phase,frequency,power,power_loss,power_input,efficiency,slips,f_thrust_wheel,f_lat_wheel,f_x_pod,f_y_pod] = ...
         calc_main(state, i - 1, dt, n_lim, n_brake, v, a, distance, phase, frequency, power, power_loss, power_input, efficiency, slips, ...
                   f_thrust_wheel, f_lat_wheel, f_x_pod, f_y_pod, parameters, braking_force, fx_lookup_table, pl_lookup_table, of_coefficients);
