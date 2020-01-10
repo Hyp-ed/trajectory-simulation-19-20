@@ -64,11 +64,8 @@ function [v,a,distance,theta,omega,power,power_loss,power_input,efficiency,frequ
 
     
     % Calculate total x forces
-    if state == 2
-        f_x_pod(i) = f_thrust(i)*n_lim - braking_force*n_brake;
-    else
-        f_x_pod(i) = f_thrust(i)*n_lim;
-    end
+    f_x_pod(i) = f_thrust(i)*n_lim;
+    
     
     
     % Calculate acceleration, velocity and distance
@@ -79,7 +76,6 @@ function [v,a,distance,theta,omega,power,power_loss,power_input,efficiency,frequ
     distance(i) = distance(i-1)+dt*v(i);
     
     % Calculate lateral torque, power and efficiency
-    torque_lat(i) = lim_parameters.ro*lim_parameters.w*f_lat_wheel(i);
     power(i) = f_x_pod(i)*v(i); % power output = force * velocity
     power_input(i) = power(i)+power_loss(i); % ignoring inertia
     
