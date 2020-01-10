@@ -32,7 +32,7 @@ distance = zeros(1,length(time));           % Distance travelled
 phase = zeros(1,length(time));              % Current phase of Lim fields
 frequency = zeros(1,length(time));          % Lim frequency
 power = zeros(1,length(time));              % Power
-power_loss = zeros(1,length(time));         % Power loss
+powerLoss = zeros(1,length(time));         % Power loss
 power_input = zeros(1,length(time));        % Power input
 efficiency = zeros(1,length(time));         % Power output / Power input
 slips = zeros(1,length(time));              % Slip between LIM field and track
@@ -62,9 +62,9 @@ for i = 2:length(time) % Start at i = 2 because values are all init at 1
         state = 3; % Max frequency
         
         % Recalculate previous time = i - 1 to avoid briefly surpassing max frequency
-        [v,a,distance,phase,frequency,power,power_loss,power_input,efficiency,slips,f_thrust_wheel,f_lat_wheel,f_x_pod,f_y_pod] = ...
-        calc_main(state, i - 1, dt, n_lim, n_brake, v, a, distance, phase, frequency, power, power_loss, power_input, efficiency, slips, ...
-                  f_thrust_wheel, f_lat_wheel, f_x_pod, f_y_pod, parameters, braking_force, fx_lookup_table, pl_lookup_table, of_coefficients);
+        [v,a,distance,phase,frequency,power,powerLoss,powerInput,efficiency,frequency,fxLim,fx] = ...
+            calc_main(parameters,state,i-1,v,a,distance,phase,frequency,power,powerLoss,powerInput,efficiency,frequency,fxLim,fx,braking_force,ForceLookupTable);
+    
     end
     
     % If we have reached the maximum allowed acceleration distance we 
@@ -78,20 +78,16 @@ for i = 2:length(time) % Start at i = 2 because values are all init at 1
         % LP Determine stored energy in Lims that would be translated intro
         %  translational kinetic energy
         kinetic_energy = 0.5 * parameters.mass * v(i-1)^2;
-        rotational_kinetic_energy = n_lim * 0.5 * parameters.i * frequency(i-1)^2;
-        total_kinetic_energy = kinetic_energy + rotational_kinetic_energy;
-        e_tot = kinetic_energy + rotational_kinetic_energy;
-        braking_dist = (e_tot / parameters.mass) / (deceleration_total);
-        if distance(i-1) >= (parameters.l - braking_dist)
+        braking_dist = (kinetic_energy / parameters.mass) / (deceleration_total);
+        if distance(i-1) >= (parameters.trackLength - braking_dist)
             state = 2; % Deceleration
         end
     end
     
     %% Main calculation
     % Calculate for current time = i
-    [v,a,distance,phase,frequency,power,power_loss,power_input,efficiency,slips,f_thrust_wheel,f_lat_wheel,f_x_pod,f_y_pod] = ...
-    calc_main(state, i, dt, n_lim, n_brake, v, a, distance, phase, frequency, power, power_loss, power_input, efficiency, slips, ...
-              f_thrust_wheel, f_lat_wheel, f_x_pod, f_y_pod, parameters, braking_force, fx_lookup_table, pl_lookup_table, of_coefficients);
+    [v,a,distance,phase,frequency,power,powerLoss,powerInput,efficiency,frequency,fxLim,fx] = ...
+    calc_main(parameters,state,i,v,a,distance,phase,frequency,power,powerLoss,powerInput,efficiency,frequency,fxLim,fx,braking_force,ForceLookupTable);
     
     fprintf("Step: %i, %.2f s, %.2f m, %.2f m/s, %4.0f RPM, %.2f m/s, state: %i\n", i, time(i), distance(i), v(i), frequency(i) * 60 / (2 * pi), slips(i), state)
     
@@ -106,7 +102,7 @@ for i = 2:length(time) % Start at i = 2 because values are all init at 1
     if v(i) <= 0 || i == length(time)
         % Truncate arrays and create final result structure 
         result = finalizeResults(i, time, distance, v, a, phase, frequency * 60 / (2 * pi), f_thrust_wheel, f_lat_wheel,...
-                                 f_x_pod, f_y_pod, power, power_loss, power_input, efficiency, slips);
+                                 f_x_pod, f_y_pod, power, powerLoss, power_input, efficiency, slips);
         % Break from loop
         break;
     end
