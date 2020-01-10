@@ -15,8 +15,8 @@ clear; clc;
 % Load parameters from './config.m'
 parameters = loadParameters();
 
-% Generate lookup tables and optimal frequency coefficients from COMSOL input
-generate_table()
+% Generate lookup tables and optimal slip coefficients from COMSOL input
+fx_lookup_table = generate_table();
 
 % Additional parameters
 deceleration_total = 9.81;     % Total braking deceleration

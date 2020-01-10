@@ -1,4 +1,4 @@
-function [v,a,distance,theta,frequency,power,power_loss,power_input,efficiency,slips,f_thrust,f_lat_wheel,f_x_pod,f_y_pod] = calc_main(state,i,dt,n_lim,n_brake,v,a,distance,theta,frequency,power,power_loss,power_input,efficiency,slips,f_thrust,f_lat_wheel,f_x_pod,f_y_pod,lim_parameters,braking_force,fx_lookup_table,pl_lookup_table,of_coefficients)
+function [v,a,distance,theta,frequency,power,power_loss,power_input,efficiency,slips,f_thrust,f_lat_wheel,f_x_pod,f_y_pod] = calc_main(state,i,dt,n_lim,n_brake,v,a,distance,theta,frequency,power,power_loss,power_input,efficiency,slips,f_thrust,f_lat_wheel,f_x_pod,f_y_pod,parameters,braking_force,fx_lookup_table,pl_lookup_table,ct_lookup_table,of_coefficients)
 % CALC_MAIN Calculates trajectory values at each point in time.
 % calc_main gets called at each iteration and handles the states of the 
 % trajectory via a passed state input argument.
@@ -16,45 +16,45 @@ function [v,a,distance,theta,frequency,power,power_loss,power_input,efficiency,s
             
             % Calculate angular velocity and angle of Halbach wheels 
             % LP: slips? Phase?
-            frequency(i) = (slips(i)+v(i-1))/lim_parameters.ro;
+            frequency(i) = (slips(i)+v(i-1))/parameters.ro;
             theta(i) = theta(i-1) + frequency(i) * dt;
             
             % Calculate required angular acceleration and torque 
             % LP needed at all?
             alpha = (frequency(i)-frequency(i-1))/dt;
-            torque(i) = alpha * lim_parameters.i;
+            torque(i) = alpha * parameters.i;
             
             % Calculate rail heating losses LP Maybe relate this to end
             % effects and rail heating losses from LIMs
 
-            %power_loss(i) = n_lim*calc_pl(slips(i), v(i-1), pl_lookup_table, lim_parameters);
+            %power_loss(i) = n_lim*calc_pl(slips(i), v(i-1), pl_lookup_table, parameters);
             power_loss(i) = 0 % LP For now
                      
         case 2 % Deceleration using EmBrakes
             % Find steady state slips based on constraints from equations of motion assuming no external motor torque
-            slips(i) = fzero(@(s) (s + v(i-1) + (n_lim*calc_fx(s,v(i-1),fx_lookup_table) - n_brake*braking_force)/lim_parameters.M*dt)/lim_parameters.ro - frequency(i-1) + calc_fx(s,v(i-1),fx_lookup_table)*lim_parameters.ro/lim_parameters.i*dt,[slips(i-1)-1,slips(i-1)+1]);
+            slips(i) = fzero(@(s) (s + v(i-1) + (n_lim*calc_fx(s,v(i-1),fx_lookup_table) - n_brake*braking_force)/parameters.M*dt)/parameters.ro - frequency(i-1) + calc_fx(s,v(i-1),fx_lookup_table)*parameters.ro/parameters.i*dt,[slips(i-1)-1,slips(i-1)+1]);
 
             
             f_thrust(i) = calc_fx(slips(i), v(i-1), fx_lookup_table);
-            frequency(i) = frequency(i-1) - f_thrust(i) * lim_parameters.ro / lim_parameters.i * dt;
+            frequency(i) = frequency(i-1) - f_thrust(i) * parameters.ro / parameters.i * dt;
             theta(i) = theta(i-1) + frequency(i) * dt;
 
-            power_loss(i) = n_lim*calc_pl(slips(i), v(i-1), pl_lookup_table, lim_parameters);
+            power_loss(i) = n_lim*calc_pl(slips(i), v(i-1), pl_lookup_table, parameters);
             alpha = (frequency(i)-frequency(i-1))/dt;
         
 
             
         case 3 % Max RPM
             % Set frequency to max. frequency
-            frequency(i) = lim_parameters.m_frequency;
+            frequency(i) = parameters.m_frequency;
             theta(i) = theta(i-1) + frequency(i) * dt;
-            slips(i) = frequency(i)*lim_parameters.ro - v(i-1);
+            slips(i) = frequency(i)*parameters.ro - v(i-1);
             f_thrust(i) = calc_fx(slips(i), v(i-1), fx_lookup_table);
             alpha = (frequency(i)-frequency(i-1))/dt;
-            torque(i) = alpha * lim_parameters.i;
-            %torque_motor(i) =  torque(i) + f_thrust_wheel(i) * lim_parameters.ro + power_loss(i)/n_lim * frequency(i);
-            torque_motor(i) =  torque(i) + f_thrust(i) * lim_parameters.ro;
-            power_loss(i) = n_lim*calc_pl(slips(i), v(i-1), pl_lookup_table, lim_parameters);
+            torque(i) = alpha * parameters.i;
+            %torque_motor(i) =  torque(i) + f_thrust_wheel(i) * parameters.ro + power_loss(i)/n_lim * frequency(i);
+            torque_motor(i) =  torque(i) + f_thrust(i) * parameters.ro;
+            power_loss(i) = n_lim*calc_pl(slips(i), v(i-1), pl_lookup_table, parameters);
     end
     
   
@@ -66,7 +66,7 @@ function [v,a,distance,theta,frequency,power,power_loss,power_input,efficiency,s
     
     
     % Calculate acceleration, velocity and distance
-    a(i) = f_x_pod(i)/lim_parameters.M;
+    a(i) = f_x_pod(i)/parameters.M;
     
     % Calculate trajectory
     v(i) = v(i-1) + dt*a(i);
