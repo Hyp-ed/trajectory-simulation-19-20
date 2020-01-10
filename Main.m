@@ -1,14 +1,13 @@
-%% Pod Trajectory Simulation, HypED 2018/19
+%% Pod Trajectory Simulation, HypED 2019/20
 % This script calculates the trajectory of the pod inside the tube by
-% calculating the force from the Halbach wheel propulsion module. A linear 
-% increase/decrease in RPM is assumed (capped by a given maximum angular
-% acceleration), and the rpm cannot exceed the max RPM given by the motor 
-% specifications. Inertia in power input has been ignored when in efficiency
-% calculation.
+% calculating the force from the DSLIM propulsion module. Lookup tables
+% generated in COMSOL Multiphysics are used to determine the thrust force
+% and power loss for given frequency-velocity-combinations.
 %
 % NOTE ABOUT TIME STEP (dt):
 % For quick estimates a time step of ~0.1s is sufficient. 
 % For more accurate results use a time step of 0.05s or smaller.
+% @author       Rafael Anderka, Lorenzo Principe
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Lines containing "LP" are to be removed or changed
@@ -23,13 +22,12 @@ useMaxAccDistance = false;
 maxAccDistance = 1000;
 
 % Import parameters from './Parameters/HalbachWheel_parameters.xlsx'
-Lim_parameters = importLimParameters();
+lim_parameters = importLimParameters();
 
 % Import lookup tables and optimal slip coefficients
-fx_lookup_table = load('Parameters/forceLookupTable.mat');              % Thrust force lookup table (net values for a wheel pair)
-pl_lookup_table = load('Parameters/powerLossLookupTable.mat');          % Power loss lookup table (net values for a wheel pair)
-ct_lookup_table = load('Parameters/coggingTorqueLookupTable.mat');      % Interaction torque lookup table (values for a single wheel) LP
-of_coefficients = load('Parameters/optimalFrequencyCoefficients.mat');       % Optimal slip coefficients
+fx_lookup_table = load('Parameters/forceLookupTable.mat');              % Thrust force lookup table (total values of the DSLIM)
+pl_lookup_table = load('Parameters/powerLossLookupTable.mat');          % Power loss lookup table (total values of the DSLIM)
+of_coefficients = load('Parameters/optimalFrequencyCoefficients.mat');  % Optimal frequency coefficients
 
 % Setup parameters
 dt = 1/100;                                                 % Time step (see note above)
@@ -41,9 +39,9 @@ spring_compression = 30;                                    % Spring compression
 spring_coefficient = 20.6;                                  % Spring coefficient in [N/mm]
 actuation_force = spring_compression * spring_coefficient;  % Spring actuation force
 braking_force = actuation_force * cof / (tan(0.52) - cof);  % Force from a single brake pad
-deceleration_total = n_brake * braking_force / Lim_parameters.M; % Braking deceleration from all brakes
+deceleration_total = n_brake * braking_force / lim_parameters.M; % Braking deceleration from all brakes
 stripe_dist = 100 / 3.281;                                  % Distance between stripes
-number_of_stripes = floor(Lim_parameters.l / stripe_dist); % Total number of stripes we will detect
+number_of_stripes = floor(lim_parameters.l / stripe_dist);  % Total number of stripes we will detect
 
 %% Initialize arrays
 %  Create all necessary arrays and initialize with 0s for each time step. 
@@ -84,13 +82,13 @@ stripe_count = 0;   % Initially we have counted 0 stripes
 for i = 2:length(time) % Start at i = 2 because values are all init at 1
     %% Phase transitions
     % If we have exceeded the max. RPM we cap the RPM and recalculate
-    if (omega(i-1) * 60 / (2 * pi)) > Lim_parameters.m_rpm
+    if (omega(i-1) * 60 / (2 * pi)) > lim_parameters.m_rpm
         phase = 3; % Max RPM
         
         % Recalculate previous time = i - 1 to avoid briefly surpassing max RPM
         [v,a,distance,theta,omega,torque,torque_lat,torque_motor,power,power_loss,power_input,efficiency,slips,f_thrust_wheel,f_lat_wheel,f_x_pod,f_y_pod] = ...
         calc_main(phase, i - 1, dt, n_Lim, n_brake, v, a, distance, theta, omega, torque, torque_lat, torque_motor, power, power_loss, power_input, efficiency, slips, ...
-                  f_thrust_wheel, f_lat_wheel, f_x_pod, f_y_pod, Lim_parameters, braking_force, fx_lookup_table, pl_lookup_table, ct_lookup_table, of_coefficients);
+                  f_thrust_wheel, f_lat_wheel, f_x_pod, f_y_pod, lim_parameters, braking_force, fx_lookup_table, pl_lookup_table, of_coefficients);
     end
     
     % If we have reached the maximum allowed acceleration distance we 
@@ -103,12 +101,12 @@ for i = 2:length(time) % Start at i = 2 because values are all init at 1
         % Calculate our 'worst case' braking distance assuming a 100% energy transfer from wheels into translational kinetic energy
         % LP Determine stored energy in Lims that would be translated intro
         %  translational kinetic energy
-        kinetic_energy = 0.5 * Lim_parameters.M * v(i-1)^2;
-        rotational_kinetic_energy = n_Lim * 0.5 * Lim_parameters.i * omega(i-1)^2;
+        kinetic_energy = 0.5 * lim_parameters.M * v(i-1)^2;
+        rotational_kinetic_energy = n_Lim * 0.5 * lim_parameters.i * omega(i-1)^2;
         total_kinetic_energy = kinetic_energy + rotational_kinetic_energy;
         e_tot = kinetic_energy + rotational_kinetic_energy;
-        braking_dist = (e_tot / Lim_parameters.M) / (deceleration_total);
-        if distance(i-1) >= (Lim_parameters.l - braking_dist)
+        braking_dist = (e_tot / lim_parameters.M) / (deceleration_total);
+        if distance(i-1) >= (lim_parameters.l - braking_dist)
             phase = 2; % Deceleration
         end
     end
@@ -117,7 +115,7 @@ for i = 2:length(time) % Start at i = 2 because values are all init at 1
     % Calculate for current time = i
     [v,a,distance,theta,omega,torque,torque_lat,torque_motor,power,power_loss,power_input,efficiency,slips,f_thrust_wheel,f_lat_wheel,f_x_pod,f_y_pod] = ...
     calc_main(phase, i, dt, n_Lim, n_brake, v, a, distance, theta, omega, torque, torque_lat, torque_motor, power, power_loss, power_input, efficiency, slips, ...
-              f_thrust_wheel, f_lat_wheel, f_x_pod, f_y_pod, Lim_parameters, braking_force, fx_lookup_table, pl_lookup_table, ct_lookup_table, of_coefficients);
+              f_thrust_wheel, f_lat_wheel, f_x_pod, f_y_pod, lim_parameters, braking_force, fx_lookup_table, pl_lookup_table, of_coefficients);
     
     fprintf("Step: %i, %.2f s, %.2f m, %.2f m/s, %4.0f RPM, %.2f Nm, %.2f m/s, Phase: %i\n", i, time(i), distance(i), v(i), omega(i) * 60 / (2 * pi), torque_motor(i), slips(i), phase)
     
