@@ -12,34 +12,15 @@
 clear; clc;
 
 %% Parameters
-% Script mode
-useMaxAccDistance = false;
-maxAccDistance = 1000;
-
 % Load parameters from './config.m'
 parameters = loadParameters();
 
-% Generate lookup table
+% Generate lookup tables and optimal slip coefficients from COMSOL input
 generate_table()
 
-% Import lookup tables and optimal slip coefficients
-fx_lookup_table = load('lookup_tables/temp/forceLookupTable.mat');              % Thrust force lookup table (total values of the DSLIM)
-%pl_lookup_table = load('lookup_tables/temp/powerLossLookupTable.mat');          % Power loss lookup table (total values of the DSLIM)
-of_coefficients = load('lookup_tables/temp/optimalSlipsCoefficients.mat');      % Optimal frequency coefficients
-
-% Setup parameters
-dt = 1/100;                                                         % Time step (see note above)
-tmax = 120;                                                         % Maximum allowed duration of run
-n_lim = 2;                                                          % Number of Lims
-n_brake = 2;                                                        % Number of brakes
-cof = 0.38;                                                         % Coefficient of kinetic friction of the brake pads
-spring_compression = 30;                                            % Spring compression in [mm] when wedge is pressing against rail
-spring_coefficient = 20.6;                                          % Spring coefficient in [N/mm]
-actuation_force = spring_compression * spring_coefficient;          % Spring actuation force
-braking_force = actuation_force * cof / (tan(0.52) - cof);          % Force from a single brake pad
-deceleration_total = n_brake * braking_force / parameters.mass;    % Braking deceleration from all brakes
-stripe_dist = 100 / 3.281;                                          % Distance between stripes
-number_of_stripes = floor(parameters.l / stripe_dist);          % Total number of stripes we will detect
+% Additional parameters
+deceleration_total = 9.81;     % Total braking deceleration
+number_of_stripes = floor(parameters.track_length / parameters.stripe_dist);    % Total number of stripes we will detect
 
 %% Initialize arrays
 %  Create all necessary arrays and initialize with 0s for each time step. 

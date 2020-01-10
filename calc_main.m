@@ -1,4 +1,4 @@
-function [v,a,distance,theta,frequency,power,power_loss,power_input,efficiency,slips,f_thrust,f_lat_wheel,f_x_pod,f_y_pod] = calc_main(state,i,dt,n_lim,n_brake,v,a,distance,theta,frequency,power,power_loss,power_input,efficiency,slips,f_thrust,f_lat_wheel,f_x_pod,f_y_pod,lim_parameters,braking_force,fx_lookup_table,pl_lookup_table,ct_lookup_table,of_coefficients)
+function [v,a,distance,theta,frequency,power,power_loss,power_input,efficiency,slips,f_thrust,f_lat_wheel,f_x_pod,f_y_pod] = calc_main(state,i,dt,n_lim,n_brake,v,a,distance,theta,frequency,power,power_loss,power_input,efficiency,slips,f_thrust,f_lat_wheel,f_x_pod,f_y_pod,lim_parameters,braking_force,fx_lookup_table,pl_lookup_table,of_coefficients)
 % CALC_MAIN Calculates trajectory values at each point in time.
 % calc_main gets called at each iteration and handles the states of the 
 % trajectory via a passed state input argument.
@@ -7,7 +7,6 @@ function [v,a,distance,theta,frequency,power,power_loss,power_input,efficiency,s
 % state = 3 -- Max RPM
 % @author      Andreas Malekos, Rafael Anderka
 
-    
     % Calculate slips, LIM thrust force, torque (LP torque to be changed)
     switch state
         case 1 % Acceleration
@@ -30,9 +29,7 @@ function [v,a,distance,theta,frequency,power,power_loss,power_input,efficiency,s
 
             %power_loss(i) = n_lim*calc_pl(slips(i), v(i-1), pl_lookup_table, lim_parameters);
             power_loss(i) = 0 % LP For now
-           
-         
-            
+                     
         case 2 % Deceleration using EmBrakes
             % Find steady state slips based on constraints from equations of motion assuming no external motor torque
             slips(i) = fzero(@(s) (s + v(i-1) + (n_lim*calc_fx(s,v(i-1),fx_lookup_table) - n_brake*braking_force)/lim_parameters.M*dt)/lim_parameters.ro - frequency(i-1) + calc_fx(s,v(i-1),fx_lookup_table)*lim_parameters.ro/lim_parameters.i*dt,[slips(i-1)-1,slips(i-1)+1]);
