@@ -20,12 +20,8 @@ maxAccDistance = 1000;
 parameters = loadParameters();
 
 % Generate lookup table
-generate_table()
+fx_lookup_table = generate_table();
 
-% Import lookup tables and optimal slip coefficients
-fx_lookup_table = load('lookup_tables/temp/forceLookupTable.mat');              % Thrust force lookup table (total values of the DSLIM)
-%pl_lookup_table = load('lookup_tables/temp/powerLossLookupTable.mat');          % Power loss lookup table (total values of the DSLIM)
-of_coefficients = load('lookup_tables/temp/optimalSlipsCoefficients.mat');      % Optimal frequency coefficients
 
 % Setup parameters
 dt = 1/100;                                                         % Time step (see note above)

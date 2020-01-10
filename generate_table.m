@@ -1,7 +1,9 @@
-function [] = generate_table()
+function fx_lookup_table = generate_table()
 %% Generates a 3D lookup table that converts COMSOL generated csv look-up table into MATLAB matrix
 % @author Lorenzo Principe
 clc; clear; close all;
+
+display_figures = false;
 
 % Input and output file name variable
 in_file     = './lookup_tables/19-11-17_LIMForceTable_Export.xlsx';
@@ -32,24 +34,29 @@ forces      = data(1:end,3);
 % Reshape data into matrix
 forces = reshape(forces,length(velocities),length(frequencies));
 
+
+
+
 % Save Workspace
 save(out_table,'forces','v_step','freq_step','velocities','frequencies')
 
-% Plot mesh
-f = figure('Name','Forces plot');
-ax= axes('Parent',f)
+if display_figures
 
-mesh(ax,frequencies,velocities,forces);
-title('Forces look-up table');
-xlabel('Frequency (Hz)');
-ylabel('Velocity (ms^{-1})');
-zlabel('Thrust force (N)');
+    % Plot mesh
+    f = figure('Name','Forces plot');
+    ax= axes('Parent',f)
 
-% Save mesh figure
-savefig(f,out_fig)
-fprintf("Workspace saves as:\t%s\nFigure saved as:\t%s\n",...
+    mesh(ax,frequencies,velocities,forces);
+    title('Forces look-up table');
+    xlabel('Frequency (Hz)');
+    ylabel('Velocity (ms^{-1})');
+    zlabel('Thrust force (N)');
+
+    % Save mesh figure
+    savefig(f,out_fig)
+    fprintf("Workspace saves as:\t%s\nFigure saved as:\t%s\n",...
         out_table,out_fig);
-    
+end    
     
 %% Determine optimal slip as a function of velocity
 
@@ -63,24 +70,27 @@ for i = 1:length(velocities)
     opt_frequency(i) = frequencies(pos);
     opt_forces(i)    = forces(i,pos);
 end
+if display_figures
+    hold on
+    scatter3(ax,opt_frequency,velocities,opt_forces)
+    hold off
 
-hold on
-scatter3(ax,opt_frequency,velocities,opt_forces)
-hold off
-
-f2=figure('Name','Optimal Frequency')
-scatter(velocities,opt_frequency)
-
+    f2=figure('Name','Optimal Frequency')
+    scatter(velocities,opt_frequency)
+end
 
 optimalFrequencyCoefficients = polyfit(velocities,opt_frequency,1)
 
 save(out_coeff_table,'optimalFrequencyCoefficients')
+if display_figures
+    fit = polyval(optimalFrequencyCoefficients,velocities);
+    hold on 
+    plot(velocities,fit);
+    hold off
 
-fit = polyval(optimalFrequencyCoefficients,velocities);
-hold on 
-plot(velocities,fit);
-hold off
+    title('Optimal frequency')
+    xlabel('Velocity (ms^{-1})')
+    ylabel('Frequency (Hz)')
+end
 
-title('Optimal frequency')
-xlabel('Velocity (ms^{-1})')
-ylabel('Frequency (Hz)')
+fx_lookup_table = struct('v_step',v_step,'freq_step',freq_step,'frequencies',frequencies,'velocities',velocities,'forces',forces,'optimalFrequencyCoefficients',optimalFrequencyCoefficients)
