@@ -16,16 +16,16 @@ clear; clc;
 parameters = loadParameters();
 
 % Generate lookup tables and optimal slip coefficients from COMSOL input
-fx_lookup_table = generate_table();
+forceLookupTable = generateForceLookupTable();
 
 % Additional parameters
 deceleration_total = 9.81;     % Total braking deceleration
-number_of_stripes = floor(parameters.track_length / parameters.stripe_dist);    % Total number of stripes we will detect
+number_of_stripes = floor(parameters.trackLength / parameters.stripeDistance);    % Total number of stripes we will detect
 
 %% Initialize arrays
 %  Create all necessary arrays and initialize with 0s for each time step. 
 %  This is computationally faster than extending the arrays after each calculation.
-time = 0:parameters.dt:parameters.max_t;    % Create time array with time step dt and maximum time tmax
+time = 0:parameters.dt:parameters.maxT;    % Create time array with time step dt and maximum time tmax
 v = zeros(1,length(time));                  % Velocity of pod
 a = zeros(1,length(time));                  % Acceleration of pod
 distance = zeros(1,length(time));           % Distance travelled
@@ -58,7 +58,7 @@ stripe_count = 0;   % Initially we have counted 0 stripes
 for i = 2:length(time) % Start at i = 2 because values are all init at 1
     %% State transitions
     % If we have exceeded the max. RPM we cap the RPM and recalculate
-    if (frequency(i-1) * 60 / (2 * pi)) > parameters.mass_rpm
+    if (frequency(i-1) > parameters.maxFrequency)
         state = 3; % Max frequency
         
         % Recalculate previous time = i - 1 to avoid briefly surpassing max frequency
@@ -69,7 +69,7 @@ for i = 2:length(time) % Start at i = 2 because values are all init at 1
     
     % If we have reached the maximum allowed acceleration distance we 
     % transition to deceleration
-    if (useMaxAccDistance)
+    if (parameters.useMaxAccDistance)
         if distance(i-1) >= (maxAccDistance)
             state = 2; % Deceleration
         end
