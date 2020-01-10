@@ -7,7 +7,6 @@ function [v,a,distance,theta,frequency,power,power_loss,power_input,efficiency,s
 % state = 3 -- Max RPM
 % @author      Andreas Malekos, Rafael Anderka
 
-    
     % Calculate slips, LIM thrust force, torque (LP torque to be changed)
     switch state
         case 1 % Acceleration
@@ -30,9 +29,7 @@ function [v,a,distance,theta,frequency,power,power_loss,power_input,efficiency,s
 
             %power_loss(i) = n_lim*calc_pl(slips(i), v(i-1), pl_lookup_table, parameters);
             power_loss(i) = 0 % LP For now
-           
-         
-            
+                     
         case 2 % Deceleration using EmBrakes
             % Find steady state slips based on constraints from equations of motion assuming no external motor torque
             slips(i) = fzero(@(s) (s + v(i-1) + (n_lim*calc_fx(s,v(i-1),fx_lookup_table) - n_brake*braking_force)/parameters.M*dt)/parameters.ro - frequency(i-1) + calc_fx(s,v(i-1),fx_lookup_table)*parameters.ro/parameters.i*dt,[slips(i-1)-1,slips(i-1)+1]);
