@@ -23,9 +23,9 @@ parameters = loadParameters();
 generate_table()
 
 % Import lookup tables and optimal slip coefficients
-fx_lookup_table = load('Parameters/forceLookupTable.mat');              % Thrust force lookup table (total values of the DSLIM)
-pl_lookup_table = load('Parameters/powerLossLookupTable.mat');          % Power loss lookup table (total values of the DSLIM)
-of_coefficients = load('Parameters/optimalSlipsCoefficients.mat');      % Optimal frequency coefficients
+fx_lookup_table = load('lookup_tables/temp/forceLookupTable.mat');              % Thrust force lookup table (total values of the DSLIM)
+%pl_lookup_table = load('lookup_tables/temp/powerLossLookupTable.mat');          % Power loss lookup table (total values of the DSLIM)
+of_coefficients = load('lookup_tables/temp/optimalSlipsCoefficients.mat');      % Optimal frequency coefficients
 
 % Setup parameters
 dt = 1/100;                                                         % Time step (see note above)
@@ -37,7 +37,7 @@ spring_compression = 30;                                            % Spring com
 spring_coefficient = 20.6;                                          % Spring coefficient in [N/mm]
 actuation_force = spring_compression * spring_coefficient;          % Spring actuation force
 braking_force = actuation_force * cof / (tan(0.52) - cof);          % Force from a single brake pad
-deceleration_total = n_brake * braking_force / parameters.M;    % Braking deceleration from all brakes
+deceleration_total = n_brake * braking_force / parameters.mass;    % Braking deceleration from all brakes
 stripe_dist = 100 / 3.281;                                          % Distance between stripes
 number_of_stripes = floor(parameters.l / stripe_dist);          % Total number of stripes we will detect
 
@@ -77,7 +77,7 @@ stripe_count = 0;   % Initially we have counted 0 stripes
 for i = 2:length(time) % Start at i = 2 because values are all init at 1
     %% state transitions
     % If we have exceeded the max. RPM we cap the RPM and recalculate
-    if (frequency(i-1) * 60 / (2 * pi)) > parameters.m_rpm
+    if (frequency(i-1) * 60 / (2 * pi)) > parameters.mass_rpm
         state = 3; % Max RPM
         
         % Recalculate previous time = i - 1 to avoid briefly surpassing max RPM
@@ -96,11 +96,11 @@ for i = 2:length(time) % Start at i = 2 because values are all init at 1
         % Calculate our 'worst case' braking distance assuming a 100% energy transfer from wheels into translational kinetic energy
         % LP Determine stored energy in Lims that would be translated intro
         %  translational kinetic energy
-        kinetic_energy = 0.5 * parameters.M * v(i-1)^2;
+        kinetic_energy = 0.5 * parameters.mass * v(i-1)^2;
         rotational_kinetic_energy = n_lim * 0.5 * parameters.i * frequency(i-1)^2;
         total_kinetic_energy = kinetic_energy + rotational_kinetic_energy;
         e_tot = kinetic_energy + rotational_kinetic_energy;
-        braking_dist = (e_tot / parameters.M) / (deceleration_total);
+        braking_dist = (e_tot / parameters.mass) / (deceleration_total);
         if distance(i-1) >= (parameters.l - braking_dist)
             state = 2; % Deceleration
         end
