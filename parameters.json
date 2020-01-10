@@ -1,0 +1,8 @@
+{
+	"track_length"  : 1250,
+	"mass"          : 250,
+    "lim_length"    : 1,
+	"air_gap"       : 0.006,
+	"pole_pairs"    : 5,
+	"max_frequency" : 500
+}

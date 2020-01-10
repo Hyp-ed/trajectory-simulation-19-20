@@ -3,9 +3,9 @@ function [ parameters ] = loadParameters()
 %  Inputs:
 %  Output: 
 %    [ parameters ]      Parameter structure containing imported variables
-%  @author              Rafael Anderka 02/11/2018
+%  @author              Rafael Anderka 10/01/2020
 
-    fname = './config/config.json';
+    fname = './parameters.json';
     parameters = jsondecode(fileread(fname));
     
 end

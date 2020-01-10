@@ -9,20 +9,15 @@
 % For more accurate results use a time step of 0.05s or smaller.
 % @author       Rafael Anderka, Lorenzo Principe
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% Lines containing "LP" are to be removed or changed
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-
 clear; clc;
 
 %% Parameters
 % Script mode
-useMaxAccDistance = false;          
+useMaxAccDistance = false;
 maxAccDistance = 1000;
 
-% Import parameters from './Parameters/HalbachWheel_parameters.xlsx'
-lim_parameters = importLimParameters();
+% Load parameters from './config.m'
+parameters = loadParameters();
 
 % Import lookup tables and optimal slip coefficients
 fx_lookup_table = load('Parameters/forceLookupTable.mat');              % Thrust force lookup table (total values of the DSLIM)
@@ -39,9 +34,9 @@ spring_compression = 30;                                            % Spring com
 spring_coefficient = 20.6;                                          % Spring coefficient in [N/mm]
 actuation_force = spring_compression * spring_coefficient;          % Spring actuation force
 braking_force = actuation_force * cof / (tan(0.52) - cof);          % Force from a single brake pad
-deceleration_total = n_brake * braking_force / lim_parameters.M;    % Braking deceleration from all brakes
+deceleration_total = n_brake * braking_force / parameters.M;    % Braking deceleration from all brakes
 stripe_dist = 100 / 3.281;                                          % Distance between stripes
-number_of_stripes = floor(lim_parameters.l / stripe_dist);          % Total number of stripes we will detect
+number_of_stripes = floor(parameters.l / stripe_dist);          % Total number of stripes we will detect
 
 %% Initialize arrays
 %  Create all necessary arrays and initialize with 0s for each time step. 
@@ -79,13 +74,13 @@ stripe_count = 0;   % Initially we have counted 0 stripes
 for i = 2:length(time) % Start at i = 2 because values are all init at 1
     %% state transitions
     % If we have exceeded the max. RPM we cap the RPM and recalculate
-    if (frequency(i-1) * 60 / (2 * pi)) > lim_parameters.m_rpm
+    if (frequency(i-1) * 60 / (2 * pi)) > parameters.m_rpm
         state = 3; % Max RPM
         
         % Recalculate previous time = i - 1 to avoid briefly surpassing max RPM
         [v,a,distance,phase,frequency,torque,torque_lat,torque_motor,power,power_loss,power_input,efficiency,slips,f_thrust_wheel,f_lat_wheel,f_x_pod,f_y_pod] = ...
         calc_main(state, i - 1, dt, n_lim, n_brake, v, a, distance, phase, frequency, power, power_loss, power_input, efficiency, slips, ...
-                  f_thrust_wheel, f_lat_wheel, f_x_pod, f_y_pod, lim_parameters, braking_force, fx_lookup_table, pl_lookup_table, of_coefficients);
+                  f_thrust_wheel, f_lat_wheel, f_x_pod, f_y_pod, parameters, braking_force, fx_lookup_table, pl_lookup_table, of_coefficients);
     end
     
     % If we have reached the maximum allowed acceleration distance we 
@@ -98,12 +93,12 @@ for i = 2:length(time) % Start at i = 2 because values are all init at 1
         % Calculate our 'worst case' braking distance assuming a 100% energy transfer from wheels into translational kinetic energy
         % LP Determine stored energy in Lims that would be translated intro
         %  translational kinetic energy
-        kinetic_energy = 0.5 * lim_parameters.M * v(i-1)^2;
-        rotational_kinetic_energy = n_lim * 0.5 * lim_parameters.i * frequency(i-1)^2;
+        kinetic_energy = 0.5 * parameters.M * v(i-1)^2;
+        rotational_kinetic_energy = n_lim * 0.5 * parameters.i * frequency(i-1)^2;
         total_kinetic_energy = kinetic_energy + rotational_kinetic_energy;
         e_tot = kinetic_energy + rotational_kinetic_energy;
-        braking_dist = (e_tot / lim_parameters.M) / (deceleration_total);
-        if distance(i-1) >= (lim_parameters.l - braking_dist)
+        braking_dist = (e_tot / parameters.M) / (deceleration_total);
+        if distance(i-1) >= (parameters.l - braking_dist)
             state = 2; % Deceleration
         end
     end
@@ -112,7 +107,7 @@ for i = 2:length(time) % Start at i = 2 because values are all init at 1
     % Calculate for current time = i
     [v,a,distance,phase,frequency,torque,torque_lat,torque_motor,power,power_loss,power_input,efficiency,slips,f_thrust_wheel,f_lat_wheel,f_x_pod,f_y_pod] = ...
     calc_main(state, i, dt, n_lim, n_brake, v, a, distance, phase, frequency, power, power_loss, power_input, efficiency, slips, ...
-              f_thrust_wheel, f_lat_wheel, f_x_pod, f_y_pod, lim_parameters, braking_force, fx_lookup_table, pl_lookup_table, of_coefficients);
+              f_thrust_wheel, f_lat_wheel, f_x_pod, f_y_pod, parameters, braking_force, fx_lookup_table, pl_lookup_table, of_coefficients);
     
     fprintf("Step: %i, %.2f s, %.2f m, %.2f m/s, %4.0f RPM, %.2f Nm, %.2f m/s, state: %i\n", i, time(i), distance(i), v(i), frequency(i) * 60 / (2 * pi), torque_motor(i), slips(i), state)
     
