@@ -53,15 +53,11 @@ if display_figures
     zlabel('Thrust force (N)');
 
     % Save mesh figure
-    savefig(f,out_fig)
-    fprintf("Workspace saves as:\t%s\nFigure saved as:\t%s\n",...
-        out_table,out_fig);
+    savefig(f, out_fig)
+    fprintf("Workspace saves as:\t%s\nFigure saved as:\t%s\n", out_table, out_fig);
 end    
     
-%% Determine optimal slip as a function of velocity
-
-
-
+%% Determine optimal frequency as a function of velocity
 opt_frequency   = velocities;
 opt_forces      = zeros(length(velocities),1);
 
@@ -71,26 +67,26 @@ for i = 1:length(velocities)
     opt_forces(i)    = forces(i,pos);
 end
 if display_figures
-    hold on
-    scatter3(ax,opt_frequency,velocities,opt_forces)
-    hold off
+    hold on;
+    scatter3(ax,opt_frequency,velocities,opt_forces);
+    hold off;
 
-    f2=figure('Name','Optimal Frequency')
-    scatter(velocities,opt_frequency)
+    f2=figure('Name','Optimal Frequency');
+    scatter(velocities,opt_frequency);
 end
 
-optimalFrequencyCoefficients = polyfit(velocities,opt_frequency,1)
+optimalFrequencyCoefficients = polyfit(velocities,opt_frequency,1);
 
-save(out_coeff_table,'optimalFrequencyCoefficients')
+save(out_coeff_table,'optimalFrequencyCoefficients');
 if display_figures
     fit = polyval(optimalFrequencyCoefficients,velocities);
-    hold on 
+    hold on;
     plot(velocities,fit);
-    hold off
+    hold off;
 
-    title('Optimal frequency')
-    xlabel('Velocity (ms^{-1})')
-    ylabel('Frequency (Hz)')
+    title('Optimal frequency');
+    xlabel('Velocity (ms^{-1})');
+    ylabel('Frequency (Hz)');
 end
 
-forceLookupTable = struct('vStep',v_step,'freqStep',freq_step,'frequencies',frequencies,'velocities',velocities,'forces',forces,'optimalFrequencyCoefficients',optimalFrequencyCoefficients)
+forceLookupTable = struct('vStep',v_step,'freqStep',freq_step,'frequencies',frequencies,'velocities',velocities,'forces',forces,'optimalFrequencyCoefficients',optimalFrequencyCoefficients);

@@ -19,8 +19,7 @@ parameters = loadParameters();
 forceLookupTable = generateForceLookupTable();
 
 % Additional parameters
-deceleration_total = 9.81;     % Total braking deceleration
-number_of_stripes = floor(parameters.trackLength / parameters.stripeDistance);    % Total number of stripes we will detect
+deceleration = 9.81;     % Total braking deceleration
 
 %% Initialize arrays
 %  Create all necessary arrays and initialize with 0s for each time step. 
@@ -32,15 +31,15 @@ distance = zeros(1,length(time));           % Distance travelled
 phase = zeros(1,length(time));              % Current phase of Lim fields
 frequency = zeros(1,length(time));          % Lim frequency
 power = zeros(1,length(time));              % Power
-power_loss = zeros(1,length(time));         % Power loss
-power_input = zeros(1,length(time));        % Power input
+powerLoss = zeros(1,length(time));          % Power loss
+powerInput = zeros(1,length(time));         % Power input
 efficiency = zeros(1,length(time));         % Power output / Power input
-slips = zeros(1,length(time));              % Slip between LIM field and track
-f_thrust_wheel = zeros(1,length(time));     % Thrust force from a single Halbach wheel
-f_lat_wheel = zeros(1,length(time));        % Lateral force from a single Halbach wheel   
-f_x_pod = zeros(1,length(time));            % Net force in direction of track (x) for whole pod
-f_y_pod = zeros(1,length(time));            % Net force in lateral direction (y) for whole pod
-stripes = zeros(1,number_of_stripes);       % Indices at which we detect each stripe
+slip = zeros(1,length(time));               % Slip between LIM field and track
+fxLIM = zeros(1,length(time));              % Thrust force from a single Halbach wheel
+fx = zeros(1,length(time));                 % Net force in direction of track (x) for whole pod
+
+totalStripeCount = floor(parameters.trackLength / parameters.stripeDistance);    % Total number of stripes we will detect
+stripeIndices = zeros(1,totalStripeCount); % Indices at which we detect each stripe
 
 %% Calculation loop
 %  This is the main loop of the script, caluclating the relevant values for
@@ -52,7 +51,7 @@ stripes = zeros(1,number_of_stripes);       % Indices at which we detect each st
 %  state = 3 -- Max frequency
 
 state = 1;          % We start in the acceleration state
-stripe_count = 0;   % Initially we have counted 0 stripes
+stripeCount = 0;   % Initially we have counted 0 stripes
 
 % For each point in time ...
 for i = 2:length(time) % Start at i = 2 because values are all init at 1
@@ -70,19 +69,13 @@ for i = 2:length(time) % Start at i = 2 because values are all init at 1
     % If we have reached the maximum allowed acceleration distance we 
     % transition to deceleration
     if (parameters.useMaxAccDistance)
-        if distance(i-1) >= (maxAccDistance)
+        if distance(i-1) >= (parameters.maxAccDistance)
             state = 2; % Deceleration
         end
     else
-        % Calculate our 'worst case' braking distance assuming a 100% energy transfer from wheels into translational kinetic energy
-        % LP Determine stored energy in Lims that would be translated intro
-        %  translational kinetic energy
-        kinetic_energy = 0.5 * parameters.mass * v(i-1)^2;
-        rotational_kinetic_energy = n_lim * 0.5 * parameters.i * frequency(i-1)^2;
-        total_kinetic_energy = kinetic_energy + rotational_kinetic_energy;
-        e_tot = kinetic_energy + rotational_kinetic_energy;
-        braking_dist = (e_tot / parameters.mass) / (deceleration_total);
-        if distance(i-1) >= (parameters.l - braking_dist)
+        % Calculate braking distance using linear deceleration
+        brakingDist = v(i-1)^2 / (2 * deceleration);
+        if distance(i-1) >= (parameters.trackLength - brakingDist)
             state = 2; % Deceleration
         end
     end
@@ -90,15 +83,15 @@ for i = 2:length(time) % Start at i = 2 because values are all init at 1
     %% Main calculation
     % Calculate for current time = i
     [v,a,distance,phase,frequency,power,power_loss,power_input,efficiency,slips,f_thrust_wheel,f_lat_wheel,f_x_pod,f_y_pod] = ...
-    calc_main(state, i, dt, n_lim, n_brake, v, a, distance, phase, frequency, power, power_loss, power_input, efficiency, slips, ...
-              f_thrust_wheel, f_lat_wheel, f_x_pod, f_y_pod, parameters, braking_force, fx_lookup_table, pl_lookup_table, of_coefficients);
+    calc_main(parameters, state, i, v, a, distance, phase, frequency, power, powerLoss, powerInput, efficiency, slips, ...
+              fxLIM, fx, forceLookupTable);
     
     fprintf("Step: %i, %.2f s, %.2f m, %.2f m/s, %4.0f RPM, %.2f m/s, state: %i\n", i, time(i), distance(i), v(i), frequency(i) * 60 / (2 * pi), slips(i), state)
     
     %% Stripes
-    if (distance(i) >= (1 + stripe_count) * stripe_dist)
-        stripes(1 + stripe_count) = i;
-        stripe_count = stripe_count + 1;
+    if (distance(i) >= (1 + stripeCount) * parameters.stripeDistance)
+        stripeIndices(1 + stripeCount) = i;
+        stripeCount = stripeCount + 1;
     end
     
     %% Exit conditions
