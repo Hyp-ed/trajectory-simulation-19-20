@@ -61,7 +61,7 @@ for i = 1:length(velocities)
     opt_frequency(i) = frequencies(pos);
     opt_forces(i)    = forces(i,pos);
 end
-%
+
 hold on
 scatter3(ax,opt_frequency,velocities,opt_forces)
 hold off

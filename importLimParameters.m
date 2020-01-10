@@ -9,7 +9,7 @@ function [ Parameter ] = importLimParameters()
 %  Modified:            Lorenzo Principe 12/11/2019
 
     % Set filepath to the excel workbook
-    params_filepath = './Parameters/Lim_parameters.xlsx';
+    params_filepath = './Parameters/lim_parameters.xlsx';
 
     % Import spreadsheets using the importSpreadsheet function
     % Input arguments of importSpreadsheet:
