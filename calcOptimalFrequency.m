@@ -1,4 +1,4 @@
-function optimalFrequency = calcOptimalFrequency(velocity,of_coefficients)
-% CALCOPTIMALFREQUENCY  Calculates the optimal frequency for a given velocity.
-    optimalFrequency = polyval(of_coefficients, velocity);
+function optimalFrequency = calcOptimalFrequency(velocity, parameters)
+% CALCOPTIMALFREQUENCY  Calculates the optimal DSLIM frequency for a given velocity.
+    optimalFrequency = polyval(parameters.forceLookupTable.optimalFrequencyCoefficients, velocity);
 end

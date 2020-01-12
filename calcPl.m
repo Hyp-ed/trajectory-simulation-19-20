@@ -26,4 +26,3 @@ function pl = calcPl(frequency, velocity, parameters)
 
     pl = 0;
 end
-

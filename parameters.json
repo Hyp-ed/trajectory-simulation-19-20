@@ -3,14 +3,13 @@
     "maxT"              : 120,
     "useMaxAccDistance" : false,
     "maxAccDistance"    : 500,
-    "limCount"          : 2,
     "mechBrakesCount"   : 2,
     "magBrakesCount"    : 2,
     "trackLength"       : 1250,
     "stripeDistance"    : 30.4803706413,
     "mass"              : 250,
     "limLength"         : 1,
-    "airGap"            : 0.006,
     "polePairs"         : 5,
-    "maxFrequency"      : 500
+    "maxFrequency"      : 500,
+    "deceleration"      : 19.62
 }

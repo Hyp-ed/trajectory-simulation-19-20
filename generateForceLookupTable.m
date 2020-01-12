@@ -3,7 +3,7 @@ function forceLookupTable = generateForceLookupTable()
 % @author Lorenzo Principe
 clc; clear; close all;
 
-displayFigures = true;
+generateFigures = false;
 
 fprintf("Generating force lookup table ...\n")
 
@@ -11,7 +11,7 @@ fprintf("Generating force lookup table ...\n")
 inFile      = './lookupTables/19-11-17_LIMForceTable_Export.xlsx';
 outTable    = './lookupTables/temp/forceLookupTable.mat';
 outCoeff    = './lookupTables/temp/optimalSlipsCoefficients.mat';
-outFig      = './lookupTables/temp/forceLookupTableSurfacePlot.fig';
+outFig      = './lookupTables/temp/forceLookupTablePlot.fig';
 
 % Import data
 fprintf("- reading input data ...\n")
@@ -40,7 +40,7 @@ forces = reshape(forces, length(velocities), length(frequencies));
 % Save force lookup table
 save(outTable, 'forces', 'vStep', 'freqStep', 'velocities', 'frequencies');
 
-if displayFigures
+if generateFigures
     % Plot mesh
     f   = figure('Name', 'Forces plot');
     ax  = axes('Parent', f);
@@ -65,7 +65,7 @@ for i = 1:length(velocities)
     optFrequency(i) = frequencies(pos);
     optForces(i)    = forces(i, pos);
 end
-if displayFigures
+if generateFigures
     hold on;
     scatter3(ax, optFrequency, velocities, optForces);
     hold off;
@@ -77,7 +77,7 @@ end
 optimalFrequencyCoefficients = polyfit(velocities, optFrequency, 1);
 
 save(outCoeff, 'optimalFrequencyCoefficients');
-if displayFigures
+if generateFigures
     fit = polyval(optimalFrequencyCoefficients, velocities);
     hold on;
     plot(velocities, fit);
