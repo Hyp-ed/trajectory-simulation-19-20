@@ -55,7 +55,7 @@ stripeCount = 0;   % Initially we have counted 0 stripes
 % For each point in time ...
 for i = 2:length(time) % Start at i = 2 because values are all init at 1
     %% State transitions
-    % If we have exceeded the max. RPM we cap the RPM and recalculate
+    % If we have exceeded the max. frequency we cap the frequency and recalculate
     if (frequency(i-1) > parameters.maxFrequency)
         state = 3; % Max frequency
         
