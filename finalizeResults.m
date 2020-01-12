@@ -1,48 +1,40 @@
-function [ result ] = finalizeResults(max,t,d,v,a,theta,rpm,f_thrust_wheel,f_lat_wheel,f_x_pod,f_y_pod,power,power_loss,power_input,eff,slips)
-% finalizeResults  Truncates trajectory arrays and creates a results structure
+function [ results ] = finalizeResults(maxIndex, time, distance, velocity, acceleration, phase, frequency, fx, power, powerLoss, powerInput, efficiency, slip)
+% finalizeResults  Truncates trajectory arrays and creates acceleration results structure
 % Inputs:
-%   max            Last used index in result arrays 
-%                  (will be truncated up to this index)
-%   t              Time array
-%   d              Distance travelled over time
-%   v              Velocity of pod over time
-%   a              Acceleration of pod over time
-%   rpm            RPM of Halbach wheels over time
-%   torque         Torque on Halbach wheels over time
-%   f_thrust_wheel Single Halbach wheel thrust force over time
-%   f_lat_wheel    Single lateral Halbach wheel force over time
-%   f_x_pod        Total x force over time
-%   f_y_pod        Total y force over time
-%   power          Power over time
-%   eff            Efficiency over time
-%   slips          Slips over time
-
+%   maxIndex        Last used index in results arrays 
+%                   (results will be truncated up to this index)
+%   time            Time array
+%   distance        Distance travelled over time
+%   velocity        Velocity of pod over time
+%   acceleration    Acceleration of pod over time
+%   phase           Phase of the LIM field over time
+%   frequency       Frequency of the LIM field over time
+%   fx              Total force in x-direction over time
+%   power           Power over time
+%   powerLoss       Power loss over time
+%   powerInput      Power input over time
+%   efficiency      Efficiency over time
+%   slip            Slips over time
+%
 % Output:
-%   [ result ]     Result structure
-% @author          Rafael Anderka
-%                  HypED, 03/11/2018
-% Modified:        -
+%   [ results ]     Result structure
+% @author           Rafael Anderka
+%                   HypED, 03/11/2018
 
-    % Create result structure while truncating each array up to 'max'
-    result = struct;
-    result.time = t(1:max);
-    result.velocity = v(1:max);
-    result.acceleration = a(1:max);
-    result.distance = d(1:max);
-    result.rpm = rpm(1:max);
-    result.torque = torque(1:max);
-    result.torque_lat = torque_lat(1:max);
-    result.torque_motor = torque_motor(1:max);
-    result.wheel_thrust = f_thrust_wheel(1:max);
-    result.wheel_lat = f_lat_wheel(1:max);
-    result.pod_x = f_x_pod(1:max);
-    result.pod_y = f_y_pod(1:max);
-    result.power = power(1:max);
-    result.power_loss = power_loss(1:max);
-    result.power_input = power_input(1:max);
-    result.efficiency = eff(1:max);
-    result.slips = slips(1:max);
-
+    % Create results structure while truncating each array up to 'maxIndex'
+    results = struct;
+    results.time            = time(1:maxIndex);
+    results.distance        = distance(1:maxIndex);
+    results.velocity        = velocity( 1: maxIndex);
+    results.acceleration    = acceleration(1:maxIndex);
+    results.phase           = phase(1:maxIndex);
+    results.frequency       = frequency(1:maxIndex);
+    results.fx              = fx(1:maxIndex);
+    results.power           = power(1:maxIndex);
+    results.powerLoss       = powerLoss(1:maxIndex);
+    results.powerInput      = powerInput(1:maxIndex);
+    results.efficiency      = efficiency(1:maxIndex);
+    results.slip            = slip(1:maxIndex);
 
 end
 
