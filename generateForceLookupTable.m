@@ -6,24 +6,24 @@ clc; clear; close all;
 displayFigures = false;
 
 % Input and output file name variable
-inFile     = './lookup_tables/19-11-17_LIMForceTable_Export.xlsx';
-outTable   = './lookup_tables/temp/forceLookupTable.mat';
-outCoeff = './lookup_tables/temp/optimalSlipsCoefficients.mat';
-outFig     = './lookup_tables/temp/Forces_surfacePlot.fig';
+inFile      = './lookup_tables/19-11-17_LIMForceTable_Export.xlsx';
+outTable    = './lookup_tables/temp/forceLookupTable.mat';
+outCoeff    = './lookup_tables/temp/optimalSlipsCoefficients.mat';
+outFig      = './lookup_tables/temp/Forces_surfacePlot.fig';
 
 % Import data
 data = xlsread(inFile);
 
 % Determine parameters
-freqMin    = data(1,1);
-freqMax    = data(end,1);
-vMin       = data(1,2);
-vMax       = data(end,2);
+freqMin = data(1,1);
+freqMax = data(end,1);
+vMin    = data(1,2);
+vMax    = data(end,2);
 
-vStep      = data(2,2)-data(1,2);
-vStepsCount   = (vMax-vMin)/vStep + 1;
-freqStep   = data(vStepsCount+1,1)-data(1,1);
-freqStepsCount= (freqMax-freqMin)/freqStep + 1;
+vStep           = data(2,2)-data(1,2);
+vStepsCount     = (vMax-vMin)/vStep + 1;
+freqStep        = data(vStepsCount+1,1)-data(1,1);
+freqStepsCount  = (freqMax-freqMin)/freqStep + 1;
 
 % Extract data
 frequencies = freqMin:freqStep:freqMax;
@@ -38,8 +38,8 @@ save(outTable,'forces','vStep','freqStep','velocities','frequencies');
 
 if displayFigures
     % Plot mesh
-    f = figure('Name','Forces plot');
-    ax= axes('Parent',f)
+    f   = figure('Name','Forces plot');
+    ax  = axes('Parent',f)
 
     mesh(ax,frequencies,velocities,forces);
     title('Forces lookup table');
@@ -53,8 +53,8 @@ if displayFigures
 end    
     
 %% Determine optimal frequency as a function of velocity
-optFrequency   = zeros(1,length(velocities));
-optForces      = zeros(length(velocities),1);
+optFrequency    = zeros(1,length(velocities));
+optForces       = zeros(length(velocities),1);
 
 for i = 1:length(velocities)
     [~,pos] = max(forces(i,:));
