@@ -1,5 +1,5 @@
-function fx = calc_fx(frequency,vt,fx_lookup_table)
-% CALC_FX           Calculates thrust force as a function of slip and velocity by bilinearly interpolating a thrust force lookup table
+function fx = calcFx(frequency, vt, fx_lookup_table)
+% CALCFX            Calculates thrust force as a function of slip and velocity by bilinearly interpolating a thrust force lookup table
 % Inputs:
 %   slip            Absolute slip
 %   vt              Translational Velocity

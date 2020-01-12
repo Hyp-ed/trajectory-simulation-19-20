@@ -1,5 +1,5 @@
-function pl = calc_pl(slip,vt,pl_lookup_table,parameters)
-% CALC_PL           Calculates power loss as a function of slip and velocity by bilinearly interpolating a power loss lookup table
+function pl = calcPl(slip,vt,pl_lookup_table,parameters)
+% CALCPL            Calculates power loss as a function of slip and velocity by bilinearly interpolating a power loss lookup table
 % Inputs:
 %   slip            Absolute slip
 %   vt              Translational Velocity

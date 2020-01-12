@@ -1,8 +1,8 @@
 function [velocity, acceleration, distance, phase, frequency, power, powerLoss, powerInput, efficiency, slip, fx] =   ...
-    calc_main(parameters, forceLookupTable, state, i, velocity, acceleration, distance, phase, frequency, power, ...
+    calcMain(parameters, forceLookupTable, state, i, velocity, acceleration, distance, phase, frequency, power, ...
               powerLoss, powerInput, efficiency, slip, fx)
-% CALC_MAIN Calculates trajectory values at each point in time.
-% calc_main gets called at each iteration and handles the states of the 
+% CALCMAIN  Calculates trajectory values at each point in time.
+% calcMain gets called at each iteration and handles the states of the 
 % trajectory via a passed state input argument.
 % state = 1 -- Acceleration
 % state = 2 -- Deceleration
