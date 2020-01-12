@@ -1,84 +1,79 @@
 function forceLookupTable = generateForceLookupTable()
-%% Generates a 3D lookup table that converts COMSOL generated csv look-up table into MATLAB matrix
+%% Generates a 2D lookup table by converting a COMSOL generated csv look-up table into a MATLAB matrix
 % @author Lorenzo Principe
 clc; clear; close all;
 
-display_figures = false;
+displayFigures = false;
 
 % Input and output file name variable
-in_file     = './lookup_tables/19-11-17_LIMForceTable_Export.xlsx';
-out_table   = './lookup_tables/temp/forceLookupTable.mat';
-out_coeff_table = './lookup_tables/temp/optimalSlipsCoefficients.mat';
-out_fig     = './lookup_tables/temp/Forces_surfacePlot.fig';
-
+inFile     = './lookup_tables/19-11-17_LIMForceTable_Export.xlsx';
+outTable   = './lookup_tables/temp/forceLookupTable.mat';
+outCoeff = './lookup_tables/temp/optimalSlipsCoefficients.mat';
+outFig     = './lookup_tables/temp/Forces_surfacePlot.fig';
 
 % Import data
-data = xlsread(in_file);
+data = xlsread(inFile);
 
 % Determine parameters
-freq_min    = data(1,1);
-freq_max    = data(end,1);
-v_min       = data(1,2);
-v_max       = data(end,2);
+freqMin    = data(1,1);
+freqMax    = data(end,1);
+vMin       = data(1,2);
+vMax       = data(end,2);
 
-v_step      = data(2,2)-data(1,2);
-n_v_steps   = (v_max-v_min)/v_step + 1;
-freq_step   = data(n_v_steps+1,1)-data(1,1);
-n_freq_steps= (freq_max-freq_min)/freq_step + 1;
+vStep      = data(2,2)-data(1,2);
+vStepsCount   = (vMax-vMin)/vStep + 1;
+freqStep   = data(vStepsCount+1,1)-data(1,1);
+freqStepsCount= (freqMax-freqMin)/freqStep + 1;
 
 % Extract data
-frequencies = freq_min:freq_step:freq_max;
-velocities  = v_min:v_step:v_max;
+frequencies = freqMin:freqStep:freqMax;
+velocities  = vMin:vStep:vMax;
 forces      = data(1:end,3);
 
 % Reshape data into matrix
 forces = reshape(forces,length(velocities),length(frequencies));
 
+% Save force lookup table
+save(outTable,'forces','vStep','freqStep','velocities','frequencies');
 
-
-
-% Save Workspace
-save(out_table,'forces','v_step','freq_step','velocities','frequencies')
-
-if display_figures
-
+if displayFigures
     % Plot mesh
     f = figure('Name','Forces plot');
     ax= axes('Parent',f)
 
     mesh(ax,frequencies,velocities,forces);
-    title('Forces look-up table');
+    title('Forces lookup table');
     xlabel('Frequency (Hz)');
     ylabel('Velocity (ms^{-1})');
     zlabel('Thrust force (N)');
 
     % Save mesh figure
-    savefig(f, out_fig)
-    fprintf("Workspace saves as:\t%s\nFigure saved as:\t%s\n", out_table, out_fig);
+    savefig(f, outFig)
+    fprintf("Workspace saves as:\t%s\nFigure saved as:\t%s\n", outTable, outFig);
 end    
     
 %% Determine optimal frequency as a function of velocity
-opt_frequency   = velocities;
-opt_forces      = zeros(length(velocities),1);
+optFrequency   = zeros(1,length(velocities));
+optForces      = zeros(length(velocities),1);
 
 for i = 1:length(velocities)
     [~,pos] = max(forces(i,:));
-    opt_frequency(i) = frequencies(pos);
-    opt_forces(i)    = forces(i,pos);
+    optFrequency(i) = frequencies(pos);
+    optForces(i)    = forces(i,pos);
 end
-if display_figures
+if displayFigures
     hold on;
-    scatter3(ax,opt_frequency,velocities,opt_forces);
+    scatter3(ax,optFrequency,velocities,optForces);
     hold off;
 
     f2=figure('Name','Optimal Frequency');
-    scatter(velocities,opt_frequency);
+    scatter(velocities,optFrequency);
 end
 
-optimalFrequencyCoefficients = polyfit(velocities,opt_frequency,1);
+optimalFrequencyCoefficients = polyfit(velocities,optFrequency,1);
 
-save(out_coeff_table,'optimalFrequencyCoefficients');
-if display_figures
+save(outCoeff,'optimalFrequencyCoefficients');
+if displayFigures
     fit = polyval(optimalFrequencyCoefficients,velocities);
     hold on;
     plot(velocities,fit);
@@ -89,4 +84,4 @@ if display_figures
     ylabel('Frequency (Hz)');
 end
 
-forceLookupTable = struct('vStep',v_step,'freqStep',freq_step,'frequencies',frequencies,'velocities',velocities,'forces',forces,'optimalFrequencyCoefficients',optimalFrequencyCoefficients);
+forceLookupTable = struct('vStep',vStep,'freqStep',freqStep,'frequencies',frequencies,'velocities',velocities,'forces',forces,'optimalFrequencyCoefficients',optimalFrequencyCoefficients);
