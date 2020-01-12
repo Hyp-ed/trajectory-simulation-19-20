@@ -3,7 +3,7 @@ function forceLookupTable = generateForceLookupTable()
 % @author Lorenzo Principe
 clc; clear; close all;
 
-generateFigures = false;
+generateFigures = true;
 
 fprintf("Generating force lookup table ...\n")
 
@@ -42,7 +42,7 @@ save(outTable, 'forces', 'vStep', 'freqStep', 'velocities', 'frequencies');
 
 if generateFigures
     % Plot mesh
-    f   = figure('Name', 'Forces plot');
+    f   = figure('Name', 'Force Lookup Table');
     ax  = axes('Parent', f);
 
     mesh(ax,frequencies,velocities,forces);
