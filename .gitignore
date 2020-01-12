@@ -1,5 +1,3 @@
-TrajectoryPlot.fig
+trajectoryPlot.fig
 *.asv
-lookup_tables/temp/forceLookupTable.mat
-lookup_tables/temp/*
-
+temp/
