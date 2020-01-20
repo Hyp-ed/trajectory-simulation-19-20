@@ -8,7 +8,7 @@ generateFigures = true;
 fprintf("Generating force lookup table ...\n")
 
 % Input and output file name variable
-inFile      = './lookupTables/19-11-17_LIMForceTable_Export.xlsx';
+inFile      = './lookupTables/20-01-12_COMPACT_600mm_300A.xlsx';
 outTable    = './lookupTables/temp/forceLookupTable.mat';
 outCoeff    = './lookupTables/temp/optimalSlipsCoefficients.mat';
 outFig      = './lookupTables/temp/forceLookupTablePlot.fig';

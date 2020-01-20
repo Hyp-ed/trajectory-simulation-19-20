@@ -112,14 +112,15 @@ end
 vMax = max(results.velocity);
 vMaxTime = find(results.velocity == vMax) * parameters.dt - parameters.dt;
 freqMax = max(results.frequency);
+freqMaxTime = find(results.frequency == freqMax) * parameters.dt - parameters.dt;
 fxMax = max(results.fx);
 fxMin = min(results.fx);
 % Let's display some stuff for quick viewing
 fprintf('\n--------------------RESULTS--------------------\n');
 fprintf('\nDuration of run: %.2f s\n', time(i));
 fprintf('\nDistance: %.2f m\n', distance(i));
-fprintf('\nMaximum speed: %.2f m/s at %.2f s\n', vMax(1), vMaxTime(1));
-fprintf('\nMaximum frequency: %5.0f\n', freqMax);
+fprintf('\nTop speed: %.2f m/s i.e. %.2f km/h i.e. %.2f mph at %.2f s\n', vMax(1), vMax(1) * 3.6, vMax(1) * 2.23694, vMaxTime(1));
+fprintf('\nMaximum frequency: %3.0f Hz at %.2f s\n', freqMax, freqMaxTime);
 
 %% Plot the trajectory graphs
 plotTrajectory(results);
