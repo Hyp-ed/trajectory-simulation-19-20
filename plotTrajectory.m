@@ -27,12 +27,12 @@ function plotTrajectory(result)
     % Create the plots and save them to 'trajectoryPlot.fig'
     figure('position', [x y plotWidth plotHeight]);
     ax1 = subplot(1, 4, 1);
-    plot(ax1, result.time, result.distance); axis tight; ylim([0 1300]); title('Displacement vs. Time'); ylabel('Displacement(m)'); xlabel('Time(s)');
+    plot(ax1, result.time, result.distance); axis tight; ylim([0 450]); title('Displacement vs. Time'); ylabel('Displacement(m)'); xlabel('Time(s)');
     ax2 = subplot(1, 4, 2);
-    plot(ax2, result.time, result.velocity); axis tight; ylim([0 90]); title('Velocity vs. Time'); ylabel('Velocity(m/s)'); xlabel('Time(s)');
+    plot(ax2, result.time, result.velocity); axis tight; ylim([0 50]); title('Velocity vs. Time'); ylabel('Velocity(m/s)'); xlabel('Time(s)');
     ax3 = subplot(1, 4, 3);
-    plot(ax3, result.time, result.frequency); axis tight; ylim([0 800]); title('DSLIM Frequency vs. Time'); ylabel('Frequency [Hz]'); xlabel('Time [s]');    
+    plot(ax3, result.time, result.frequency); axis tight; ylim([0 300]); title('DSLIM Frequency vs. Time'); ylabel('Frequency [Hz]'); xlabel('Time [s]');    
     ax4 = subplot(1, 4, 4);
-    plot(ax4, result.time, result.powerInput); axis tight; ylim([0 1400000]); title('Power input vs. Time'); ylabel('Power input(W)'); xlabel('Time(s)');
+    plot(ax4, result.time, result.powerInput); axis tight; ylim([0 20000]); title('Power input vs. Time'); ylabel('Power input(W)'); xlabel('Time(s)');
     savefig('trajectoryPlot');
 end

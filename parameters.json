@@ -5,11 +5,11 @@
     "maxAccDistance"    : 500,
     "mechBrakesCount"   : 2,
     "magBrakesCount"    : 2,
-    "trackLength"       : 1250,
+    "trackLength"       : 400,
     "stripeDistance"    : 30.4803706413,
-    "mass"              : 250,
+    "mass"              : 150,
     "limLength"         : 1,
     "polePairs"         : 5,
-    "maxFrequency"      : 500,
+    "maxFrequency"      : 400,
     "deceleration"      : 19.62
 }
