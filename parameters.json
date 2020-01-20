@@ -10,6 +10,6 @@
     "mass"              : 250,
     "limLength"         : 1,
     "polePairs"         : 5,
-    "maxFrequency"      : 500,
+    "maxFrequency"      : 400,
     "deceleration"      : 19.62
 }

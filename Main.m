@@ -11,6 +11,9 @@
 
 clear; clc;
 
+%% Check for temporary folder
+
+
 %% Parameters
 % Load parameters from './config.m'
 parameters = loadParameters();

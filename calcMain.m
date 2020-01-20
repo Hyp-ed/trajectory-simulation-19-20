@@ -17,21 +17,21 @@ function [velocity, acceleration, distance, phase, frequency, power, powerLoss, 
             fx(i)           = calcFx(frequency(i), velocity(i - 1), parameters);
             phase(i)        = phase(i - 1) + 2 * pi * frequency(i) * parameters.dt;
             powerLoss(i)    = calcPl(frequency(i), velocity(i - 1), parameters);
-            acceleration(i) = fx(i) / parameters.mass;
         case 2 % Deceleration using EmBrakes            
             frequency(i)    = 0;
-            fx(i)           = - parameters.brakingForce;  
+            fx(i)           = calcBrakingForce(velocity(i-1),parameters);  
             phase(i)        = phase(i - 1);
             powerLoss(i)    = 0;
-            acceleration(i) = - parameters.deceleration;
         case 3 % Max RPM
             frequency(i)    = parameters.maxFrequency;
             fx(i)           = calcFx(frequency(i), velocity(i - 1), parameters);
             phase(i)        = phase(i - 1) + 2 * pi * frequency(i) * parameters.dt;
             powerLoss(i)    = calcPl(frequency(i), velocity(i - 1), parameters);
-            acceleration(i) = fx(i) / parameters.mass;
     end
 
+    % Calculate acceleration
+    acceleration(i) = fx(i) / parameters.mass;
+    
     % Calculate velocity and distance
     velocity(i) = velocity(i - 1) + parameters.dt * acceleration(i);
     distance(i) = distance(i - 1) + parameters.dt * velocity(i);
