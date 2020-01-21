@@ -8,8 +8,8 @@
     "trackLength"       : 400,
     "stripeDistance"    : 30.4803706413,
     "mass"              : 150,
-    "limLength"         : 1,
-    "polePairs"         : 5,
+    "limLength"         : 0.6,
+    "polePairs"         : 3,
     "maxFrequency"      : 400,
     "deceleration"      : 19.62
 }

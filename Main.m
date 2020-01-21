@@ -26,6 +26,7 @@ parameters.brakingForce = parameters.mass * parameters.deceleration;  % Total br
 %  This is computationally faster than extending the arrays after each calculation.
 time = 0:parameters.dt:parameters.maxT;     % Create time array with time step dt and maximum time tmax
 velocity = zeros(1,length(time));           % Velocity of pod
+velocitySync = zeros(1,length(time));       % Synchronous velocity of stator field
 acceleration = zeros(1,length(time));       % Acceleration of pod
 distance = zeros(1,length(time));           % Distance travelled
 phase = zeros(1,length(time));              % Current phase of LIM fields
@@ -60,8 +61,8 @@ for i = 2:length(time) % Start at i = 2 because values are all init at 1
         state = 3; % Max frequency
         
         % Recalculate previous time = i - 1 to avoid briefly surpassing max frequency
-        [velocity, acceleration, distance, phase, frequency, power, powerLoss, powerInput, efficiency, slip, fx] = ...
-            calcMain(parameters, state, i, velocity, acceleration, distance, phase, frequency, power, powerLoss, ...
+        [velocity, velocitySync, acceleration, distance, phase, frequency, power, powerLoss, powerInput, efficiency, slip, fx] = ...
+            calcMain(parameters, state, i, velocity, velocitySync, acceleration, distance, phase, frequency, power, powerLoss, ...
                      powerInput, efficiency, slip, fx);
     end
     
@@ -81,8 +82,8 @@ for i = 2:length(time) % Start at i = 2 because values are all init at 1
     
     %% Main calculation
     % Calculate for current time = i
-    [velocity, acceleration, distance, phase, frequency, power, powerLoss, powerInput, efficiency, slip, fx] = ...
-        calcMain(parameters, state, i, velocity, acceleration, distance, phase, frequency, power, powerLoss, ...
+    [velocity, velocitySync, acceleration, distance, phase, frequency, power, powerLoss, powerInput, efficiency, slip, fx] = ...
+        calcMain(parameters, state, i, velocity, velocitySync, acceleration, distance, phase, frequency, power, powerLoss, ...
                  powerInput, efficiency, slip, fx);
     
     fprintf("Step: %i, %.2f s, %.2f m, %.2f m/s, %4.0f Hz, %.2f m/s, state: %i\n", i, time(i), distance(i), velocity(i), frequency(i), slip(i), state)
@@ -97,7 +98,7 @@ for i = 2:length(time) % Start at i = 2 because values are all init at 1
     % Stop when speed is 0m/s or time is up
     if velocity(i) <= 0 || i == length(time)
         % Truncate arrays and create final results structure 
-        results = finalizeResults(i, time, distance, velocity, acceleration, phase, frequency, ...
+        results = finalizeResults(i, time, distance, velocity, velocitySync, acceleration, phase, frequency, ...
                                  fx, power, powerLoss, powerInput, efficiency, slip);
         % Break from loop
         break;
@@ -112,6 +113,7 @@ freqMax = max(results.frequency);
 freqMaxTime = find(results.frequency == freqMax) * parameters.dt - parameters.dt;
 fxMax = max(results.fx);
 fxMin = min(results.fx);
+
 % Let's display some stuff for quick viewing
 fprintf('\n--------------------RESULTS--------------------\n');
 fprintf('\nDuration of run: %.2f s\n', time(i));

@@ -1,4 +1,4 @@
-function [ results ] = finalizeResults(maxIndex, time, distance, velocity, acceleration, phase, frequency, fx, power, powerLoss, powerInput, efficiency, slip)
+function [ results ] = finalizeResults(maxIndex, time, distance, velocity, velocitySync, acceleration, phase, frequency, fx, power, powerLoss, powerInput, efficiency, slip)
 % finalizeResults  Truncates trajectory arrays and creates acceleration results structure
 % Inputs:
 %   maxIndex        Last used index in results arrays 
@@ -25,7 +25,8 @@ function [ results ] = finalizeResults(maxIndex, time, distance, velocity, accel
     results = struct;
     results.time            = time(1:maxIndex);
     results.distance        = distance(1:maxIndex);
-    results.velocity        = velocity( 1: maxIndex);
+    results.velocity        = velocity(1: maxIndex);
+    results.velocitySync    = velocitySync(1: maxIndex);
     results.acceleration    = acceleration(1:maxIndex);
     results.phase           = phase(1:maxIndex);
     results.frequency       = frequency(1:maxIndex);

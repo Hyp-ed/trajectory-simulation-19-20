@@ -26,13 +26,17 @@ function plotTrajectory(result)
 
     % Create the plots and save them to 'trajectoryPlot.fig'
     figure('position', [x y plotWidth plotHeight]);
-    ax1 = subplot(1, 4, 1);
-    plot(ax1, result.time, result.distance); axis tight; ylim([0 450]); title('Displacement vs. Time'); ylabel('Displacement(m)'); xlabel('Time(s)');
-    ax2 = subplot(1, 4, 2);
-    plot(ax2, result.time, result.velocity); axis tight; ylim([0 50]); title('Velocity vs. Time'); ylabel('Velocity(m/s)'); xlabel('Time(s)');
-    ax3 = subplot(1, 4, 3);
-    plot(ax3, result.time, result.frequency); axis tight; ylim([0 300]); title('DSLIM Frequency vs. Time'); ylabel('Frequency [Hz]'); xlabel('Time [s]');    
-    ax4 = subplot(1, 4, 4);
-    plot(ax4, result.time, result.powerInput); axis tight; ylim([0 20000]); title('Power input vs. Time'); ylabel('Power input(W)'); xlabel('Time(s)');
+    ax1 = subplot(1, 6, 1);
+    plot(ax1, result.time, result.distance); axis tight; ylim([0 450]); title('Displacement vs. Time'); ylabel('Displacement [m]'); xlabel('Time [s]');
+    ax2 = subplot(1, 6, 2);
+    plot(ax2, result.time, result.velocity); axis tight; ylim([0 50]); title('Velocity vs. Time'); ylabel('Velocity [m/s]'); xlabel('Time [s]');
+    ax3 = subplot(1, 6, 3);
+    plot(ax3, result.time, result.velocitySync); axis tight; ylim([0 50]); title('DSLIM Sync. Velocity vs. Time'); ylabel('Sync. Velocity [m/s]'); xlabel('Time [s]');
+    ax4 = subplot(1, 6, 4);
+    plot(ax4, result.time, result.frequency); axis tight; ylim([0 300]); title('DSLIM Frequency vs. Time'); ylabel('Frequency [Hz]'); xlabel('Time [s]');    
+    ax5 = subplot(1, 6, 5);
+    plot(ax5, result.time, result.slip); axis tight; ylim([0 1.2]); title('Slip vs. Time'); ylabel('Slip'); xlabel('Time [s]');
+    ax6 = subplot(1, 6, 6);
+    plot(ax6, result.time, result.powerInput); axis tight; ylim([0 20000]); title('Power input vs. Time'); ylabel('Power input [W]'); xlabel('Time [s]');
     savefig('trajectoryPlot');
 end

@@ -1,5 +1,5 @@
-function [velocity, acceleration, distance, phase, frequency, power, powerLoss, powerInput, efficiency, slip, fx] =   ...
-    calcMain(parameters, state, i, velocity, acceleration, distance, phase, frequency, power, ...
+function [velocity, velocitySync, acceleration, distance, phase, frequency, power, powerLoss, powerInput, efficiency, slip, fx] =   ...
+    calcMain(parameters, state, i, velocity, velocitySync, acceleration, distance, phase, frequency, power, ...
               powerLoss, powerInput, efficiency, slip, fx)
 % CALCMAIN  Calculates trajectory values at each point in time.
 % calcMain gets called at each iteration and handles the states of the 
@@ -40,4 +40,11 @@ function [velocity, acceleration, distance, phase, frequency, power, powerLoss, 
     power(i) = fx(i) * velocity(i); % Power output = force * velocity
     powerInput(i) = power(i) + powerLoss(i); % ignoring inertia
     efficiency(i) = power(i) / powerInput(i);
+
+    % Calculate synchronous speed and slip
+    velocitySync(i) = frequency(i) * parameters.limLength / parameters.polePairs;
+    slip(i) = (velocitySync(i) - velocity(i)) / velocitySync(i);
+    if (isinf(slip(i)))
+        slip(i) = 0;
+    end
 end
