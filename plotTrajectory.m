@@ -10,9 +10,6 @@ function plotTrajectory(result)
 %                  HypED, 03/11/2018
 % Modified:        -
 
-    % Set plot size
-    plotWidth = 1500;
-    plotHeight = 500;
 
     % Get screen resolution in pixels
     set(0, 'units', 'pixels');          % Set screen units to pixels
@@ -20,9 +17,14 @@ function plotTrajectory(result)
     screenWidth = screenRes(3);         % Width is 3rd entry
     screenHeight = screenRes(4);        % Height is 4th entry
 
+    % Set plot size
+    plotWidth = screenWidth;
+    plotHeight = 700;
+
     % Find xy coordinates of plot window to center on screen
     x = (screenWidth - plotWidth) / 2;
     y = (screenHeight - plotHeight) / 2;
+    
 
     % Create the plots and save them to 'trajectoryPlot.fig'
     figure('position', [x y plotWidth plotHeight]);
