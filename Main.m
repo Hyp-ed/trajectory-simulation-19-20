@@ -12,7 +12,9 @@
 clear; clc;
 
 %% Check for temporary folder
-
+if ~exist('lookupTables/temp','dir')
+    mkdir('lookupTables/temp');
+end
 
 %% Parameters
 % Load parameters from './config.m'

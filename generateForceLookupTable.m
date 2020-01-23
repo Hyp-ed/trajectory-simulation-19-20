@@ -70,22 +70,22 @@ if generateFigures
     scatter3(ax, optFrequency, velocities, optForces);
     hold off;
 
-    f2 = figure('Name','Optimal Frequency');
-    scatter(velocities, optFrequency);
+%    f2 = figure('Name','Optimal Frequency');
+%    scatter(velocities, optFrequency);
 end
 
 optimalFrequencyCoefficients = polyfit(velocities, optFrequency, 1);
 
 save(outCoeff, 'optimalFrequencyCoefficients');
-if generateFigures
-    fit = polyval(optimalFrequencyCoefficients, velocities);
-    hold on;
-    plot(velocities, fit);
-    hold off;
-    title('Optimal frequency');
-    xlabel('Velocity (ms^{-1})');
-    ylabel('Frequency (Hz)');
-end
+%if generateFigures
+%    fit = polyval(optimalFrequencyCoefficients, velocities);
+%    hold on;
+%    plot(velocities, fit);
+%    hold off;
+%    title('Optimal frequency');
+%    xlabel('Velocity (ms^{-1})');
+%    ylabel('Frequency (Hz)');
+%end
 
 forceLookupTable = struct('vStep', vStep, ...
                           'freqStep', freqStep, ...
