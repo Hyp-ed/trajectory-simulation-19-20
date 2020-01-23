@@ -22,12 +22,6 @@ function fx = calcFx(frequency, velocity, parameters)
     fx1 = (i_f_max - i_f) / (i_f_max - i_f_min) * parameters.forceLookupTable.forces(i_v_min, i_f_min) + (i_f - i_f_min) / (i_f_max - i_f_min) * parameters.forceLookupTable.forces(i_v_min, i_f_max); % Interpolate along x-axis for y1
     fx2 = (i_f_max - i_f) / (i_f_max - i_f_min) * parameters.forceLookupTable.forces(i_v_max, i_f_min) + (i_f - i_f_min) / (i_f_max - i_f_min) * parameters.forceLookupTable.forces(i_v_max, i_f_max); % Interpolate along x-axis for y2
     fx = (i_v_max - i_v) / (i_v_max - i_v_min) * fx1 + (i_v - i_v_min) / (i_v_max - i_v_min) * fx2; % Interpolate along y-axis between (x, y1) and (x, y2)
-    
-    
-    %% Account for air drag and rolling friction
-    % Add drag
-    fx = fx - calcDrag(velocity,parameters);
-    % Add rolling friction
-    fx = fx - calcRollFriction(velocity,parameters);
+ 
     
 end

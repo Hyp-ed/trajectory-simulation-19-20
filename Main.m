@@ -42,6 +42,8 @@ powerInput = zeros(1,length(time));         % Power input
 efficiency = zeros(1,length(time));         % Power output / Power input
 slip = zeros(1,length(time));               % Slip between LIM field and track
 fx = zeros(1,length(time));                 % Net force in direction of track (x) for whole pod
+drag = zeros(1,length(time));               % Air drag force on pod
+rollFriction = zeros(1,length(time));       % Rolling friction on all sets of suspention wheels
 
 totalStripeCount = floor(parameters.trackLength / parameters.stripeDistance);    % Total number of stripes we will detect
 stripeIndices = zeros(1,totalStripeCount);  % Indices at which we detect each stripe
@@ -66,9 +68,9 @@ for i = 2:length(time) % Start at i = 2 because values are all init at 1
         state = 3; % Max frequency
         
         % Recalculate previous time = i - 1 to avoid briefly surpassing max frequency
-        [velocity, velocitySync, acceleration, distance, phase, frequency, power, powerLoss, powerInput, efficiency, slip, fx] = ...
+        [velocity, velocitySync, acceleration, distance, phase, frequency, power, powerLoss, powerInput, efficiency, slip, fx, drag, rollFriction] = ...
             calcMain(parameters, state, i, velocity, velocitySync, acceleration, distance, phase, frequency, power, powerLoss, ...
-                     powerInput, efficiency, slip, fx);
+                     powerInput, efficiency, slip, fx, drag, rollFriction);
     end
     
     % If we have reached the maximum allowed acceleration distance we 
@@ -87,9 +89,9 @@ for i = 2:length(time) % Start at i = 2 because values are all init at 1
     
     %% Main calculation
     % Calculate for current time = i
-    [velocity, velocitySync, acceleration, distance, phase, frequency, power, powerLoss, powerInput, efficiency, slip, fx] = ...
+    [velocity, velocitySync, acceleration, distance, phase, frequency, power, powerLoss, powerInput, efficiency, slip, fx, drag, rollFriction] = ...
         calcMain(parameters, state, i, velocity, velocitySync, acceleration, distance, phase, frequency, power, powerLoss, ...
-                 powerInput, efficiency, slip, fx);
+                 powerInput, efficiency, slip, fx, drag, rollFriction);
     
     fprintf("Step: %i, %.2f s, %.2f m, %.2f m/s, %4.0f Hz, %.2f m/s, state: %i\n", i, time(i), distance(i), velocity(i), frequency(i), slip(i), state)
     

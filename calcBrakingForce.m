@@ -16,11 +16,5 @@ function fx = calcBrakingForce(velocity, parameters)
 % Need to talk to team
 
     fx = - parameters.mass * 2 * 9.81;       %temporary fix
-
-%% Account for air drag and rolling friction
-    % Add drag
-    fx = fx - calcDrag(velocity,parameters);
-    % Add rolling friction
-    fx = fx - calcRollFriction(velocity,parameters) ;
-    
+   
 end

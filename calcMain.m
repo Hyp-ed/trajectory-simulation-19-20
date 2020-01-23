@@ -1,6 +1,6 @@
-function [velocity, velocitySync, acceleration, distance, phase, frequency, power, powerLoss, powerInput, efficiency, slip, fx] =   ...
+function [velocity, velocitySync, acceleration, distance, phase, frequency, power, powerLoss, powerInput, efficiency, slip, fx, drag, rollFriction] =   ...
     calcMain(parameters, state, i, velocity, velocitySync, acceleration, distance, phase, frequency, power, ...
-              powerLoss, powerInput, efficiency, slip, fx)
+              powerLoss, powerInput, efficiency, slip, fx, drag, rollFriction)
 % CALCMAIN  Calculates trajectory values at each point in time.
 % calcMain gets called at each iteration and handles the states of the 
 % trajectory via a passed state input argument.
@@ -28,6 +28,15 @@ function [velocity, velocitySync, acceleration, distance, phase, frequency, powe
             phase(i)        = phase(i - 1) + 2 * pi * frequency(i) * parameters.dt;
             powerLoss(i)    = calcPl(frequency(i), velocity(i - 1), parameters);
     end
+    
+    % Calculate air drag
+    drag(i) = calcDrag(velocity(i-1),parameters);
+    
+    % Calculate rolling friction
+    rollFriction(i) = calcRollFriction(acceleration(i-1),parameters);
+    
+    % Account for drag and friction to force
+    fx(i) = fx(i) - drag(i) - rollFriction(i);
 
     % Calculate acceleration
     acceleration(i) = fx(i) / parameters.mass;
