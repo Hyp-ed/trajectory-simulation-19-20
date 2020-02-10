@@ -6,15 +6,26 @@ function fx = calcBrakingForce(velocity, parameters)
 % Output:
 %   fx              Braking force provided by the combination of magnetic
 %                       and mechanical brakes
+%
+%   Both mechanical and magnetic brakes are applied at the same time
 
 %% Magnetic braking
 % Force determined from lookup talbe linking velocity and braking force
 % (incoming from Alejandro)
 % Linear interpolation needed
       
-%% Mechanical braking
-% Need to talk to team
+   mag = - parameters.brakeForceInterpolant(velocity);
 
-    fx = - parameters.mass * 2 * 9.81;       %temporary fix
+
+%% Mechanical braking
+% From talking to Eralp, normal force from mechanical brakes is 6 kN
+% Friction coefficient is 
+% Assumed to be constant wrt velocity
+
+% Add mechanical braking force
+    mech = - parameters.mechBrakeFCoef * parameters.mechBrakeNForce;       
    
+    
+%% Total braking force
+    fx = mech + mag;
 end

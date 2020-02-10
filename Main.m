@@ -9,7 +9,9 @@
 % For more accurate results use acceleration time step of 0.05s or smaller.
 % @author       Rafael Anderka, Lorenzo Principe
 
-clear; clc;
+clear; clc; close all;
+verbose = false;
+displayPlots = false;
 
 %% Check for temporary folder
 if ~exist('lookupTables/temp','dir')
@@ -21,10 +23,18 @@ end
 parameters = loadParameters();
 
 % Generate lookup tables and optimal slip coefficients from COMSOL input
-parameters.forceLookupTable = generateForceLookupTable();
+parameters.forceLookupTable = generateForceLookupTable(displayPlots);
+
+% Generate lookup table for magnetic braking force
+brakeTable = dlmread('lookupTables/brakeTable.txt','',5,0);
+brakeTable = brakeTable(:,1:2);
+
+% Generate brake force and brake distance interpolants
+parameters.brakeForceInterpolant = griddedInterpolant(brakeTable(:,1),brakeTable(:,2));
+brakingDistInter = generateBrakeDistInter(parameters,brakeTable);
 
 % Additional parameters
-parameters.brakingForce = parameters.mass * parameters.deceleration;  % Total braking force
+parameters.mechBrakeForce = parameters.mechBrakeFCoef * parameters.mechBrakeNForce;  % Total braking force
 
 %% Initialize arrays
 %  Create all necessary arrays and initialize with 0s for each time step. 
@@ -61,6 +71,7 @@ state = 1;         % We start in the acceleration state
 stripeCount = 0;   % Initially we have counted 0 stripes
 
 % For each point in time ...
+display('- simulating')
 for i = 2:length(time) % Start at i = 2 because values are all init at 1
     %% State transitions
     % If we have exceeded the max. frequency we cap the frequency and recalculate
@@ -81,7 +92,7 @@ for i = 2:length(time) % Start at i = 2 because values are all init at 1
         end
     else
         % Calculate braking distance using linear deceleration
-        brakingDist = velocity(i-1)^2 / (2 * parameters.deceleration);
+        brakingDist = brakingDistInter(velocity(i-1));
         if distance(i-1) >= (parameters.trackLength - brakingDist)
             state = 2; % Deceleration
         end
@@ -93,7 +104,9 @@ for i = 2:length(time) % Start at i = 2 because values are all init at 1
         calcMain(parameters, state, i, velocity, velocitySync, acceleration, distance, phase, frequency, power, powerLoss, ...
                  powerInput, efficiency, slip, fx, drag, rollFriction);
     
-    fprintf("Step: %i, %.2f s, %.2f m, %.2f m/s, %4.0f Hz, %.2f m/s, state: %i\n", i, time(i), distance(i), velocity(i), frequency(i), slip(i), state)
+    if verbose
+        fprintf("Step: %i, %.2f s, %.2f m, %.2f m/s, %4.0f Hz, %.2f m/s, state: %i\n", i, time(i), distance(i), velocity(i), frequency(i), slip(i), state)
+    end
     
     %% Stripes
     if (distance(i) >= (1 + stripeCount) * parameters.stripeDistance)
@@ -128,5 +141,8 @@ fprintf('\nDistance: %.2f m\n', distance(i));
 fprintf('\nTop speed: %.2f m/s i.e. %.2f km/h i.e. %.2f mph at %.2f s\n', vMax(1), vMax(1) * 3.6, vMax(1) * 2.23694, vMaxTime(1));
 fprintf('\nMaximum frequency: %3.0f Hz at %.2f s\n', freqMax, freqMaxTime);
 
+
 %% Plot the trajectory graphs
-plotTrajectory(results);
+if displayPlots
+    plotTrajectory(results);
+end

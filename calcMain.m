@@ -35,10 +35,9 @@ function [velocity, velocitySync, acceleration, distance, phase, frequency, powe
     % Calculate rolling friction
     rollFriction(i) = calcRollFriction(parameters);
     
-    fprintf("%f\n",fx(i));
     % Account for drag and friction to force
     fx(i) = fx(i) - drag(i) - rollFriction(i);
-    fprintf("%f after friction\n",fx(i));
+
     % Calculate acceleration
     acceleration(i) = fx(i) / parameters.mass;
     

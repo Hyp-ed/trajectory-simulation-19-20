@@ -1,9 +1,7 @@
-function forceLookupTable = generateForceLookupTable()
+function forceLookupTable = generateForceLookupTable(generateFigures)
 %% Generates a 2D lookup table by converting a COMSOL generated csv look-up table into a MATLAB matrix
 % @author Lorenzo Principe
-clc; clear; close all;
 
-generateFigures = true;
 
 fprintf("Generating force lookup table ...\n")
 
