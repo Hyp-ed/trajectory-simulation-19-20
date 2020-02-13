@@ -10,7 +10,7 @@
 % @author       Rafael Anderka, Lorenzo Principe
 
 clear; clc; close all;
-verbose = false;
+verbose = true;
 displayPlots = false;
 
 %% Check for temporary folder
@@ -105,7 +105,7 @@ for i = 2:length(time) % Start at i = 2 because values are all init at 1
                  powerInput, efficiency, slip, fx, drag, rollFriction);
     
     if verbose
-        fprintf("Step: %i, %.2f s, %.2f m, %.2f m/s, %4.0f Hz, %.2f m/s, state: %i\n", i, time(i), distance(i), velocity(i), frequency(i), slip(i), state)
+        fprintf("Step: %i, %.2f s, %.2f m, %.2f m/s, %4.0f Hz, slip: %.2f m/s, state: %i\n", i, time(i), distance(i), velocity(i), frequency(i), slip(i), state)
     end
     
     %% Stripes
