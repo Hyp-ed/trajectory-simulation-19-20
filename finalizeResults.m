@@ -30,6 +30,8 @@ function results = finalizeResults(maxIndex, state)
     results.acceleration    = state.acceleration(1:maxIndex);
     results.phase           = state.phase(1:maxIndex);
     results.frequency       = state.frequency(1:maxIndex);
+    results.DSLIMForce      = state.DSLIMForce(1:maxIndex);
+    results.brakesForce     = state.brakesForce(1:maxIndex);
     results.fx              = state.fx(1:maxIndex);
     results.power           = state.power(1:maxIndex);
     results.powerLoss       = state.powerLoss(1:maxIndex);
@@ -38,4 +40,3 @@ function results = finalizeResults(maxIndex, state)
     results.slip            = state.slip(1:maxIndex);
 
 end
-
