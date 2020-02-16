@@ -1,9 +1,9 @@
-function forceLookupTable = generateForceLookupTable(generateFigures)
+function DSLIMLookupTable = generateDSLIMLookupTable(generateFigures)
 %% Generates a 2D lookup table by converting a COMSOL generated csv look-up table into a MATLAB matrix
 % @author Lorenzo Principe
 
 
-fprintf("Generating force lookup table ...\n")
+fprintf("Generating DSLIM lookup table ...\n")
 
 % Input and output file name variable
 inFile      = './lookupTables/DSLIM_20-01-12_COMPACT_600mm_parallel_300A.xlsx';
@@ -85,7 +85,7 @@ save(outCoeff, 'optimalFrequencyCoefficients');
 %    ylabel('Frequency (Hz)');
 %end
 
-forceLookupTable = struct('vStep', vStep, ...
+DSLIMLookupTable = struct('vStep', vStep, ...
                           'freqStep', freqStep, ...
                           'frequencies', frequencies, ...
                           'velocities', velocities, ...
