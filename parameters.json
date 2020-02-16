@@ -17,5 +17,13 @@
     "limLength"         : 0.6,
     "polePairs"         : 3,
     "maxFrequency"      : 400,
-    "deceleration"      : 19.62
+    "coreCp"            : 500,
+    "coilsCp"           : 380,
+    "coilsResistivity"  : 0.0000000172,
+    "coilsTempCoeff"    : 0.00393,
+    "coilsConductivity" : 58100000,
+    "refTemp"           : 20,
+    "maxU"              : 84,
+    "maxI"              : 400,
+    "wireLength"        : 80.4
 }
