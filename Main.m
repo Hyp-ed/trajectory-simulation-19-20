@@ -41,6 +41,7 @@ parameters.brakingDistInterpolant = getBrakingDistInterpolant(parameters, brakeT
 % Additional parameters
 parameters.mechBrakeForce = parameters.mechBrakeFCoef * parameters.mechBrakeNForce;  % Total braking force
 parameters.totalStripeCount = floor(parameters.trackLength / parameters.stripeDistance);    % Total number of stripes we will detect
+parameters.coilsMass = parameters.coilsDensity * parameters.wireLength * parameters.wireArea;
 
 %% Initialize arrays
 %  Create all necessary arrays and initialize with 0s for each state.time step. 
@@ -55,6 +56,12 @@ state.frequency = zeros(1,length(state.time));          % LIM frequency
 state.power = zeros(1,length(state.time));              % Power
 state.powerLoss = zeros(1,length(state.time));          % Power loss
 state.powerInput = zeros(1,length(state.time));         % Power input
+state.coilsPowerLoss = zeros(1,length(state.time));      % Power the coils are heated with
+state.coilsTemp = zeros(1,length(state.time));           % Coil temperature
+state.coreTemp = zeros(1,length(state.time));           % Core temperature
+state.current = zeros(1,length(state.time));            % Current
+state.voltage = zeros(1,length(state.time));            % Voltage
+state.resistance = zeros(1,length(state.time));         % Resistance
 state.efficiency = zeros(1,length(state.time));         % Power output / Power input
 state.slip = zeros(1,length(state.time));               % Slip between LIM field and track
 state.DSLIMForce = zeros(1,length(state.time));         % Force from DSLIM

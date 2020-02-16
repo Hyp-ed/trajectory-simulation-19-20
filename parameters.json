@@ -18,12 +18,16 @@
     "polePairs"         : 3,
     "maxFrequency"      : 400,
     "coreCp"            : 500,
+    "coreMass"          : 15,
     "coilsCp"           : 380,
     "coilsResistivity"  : 0.0000000172,
     "coilsTempCoeff"    : 0.00393,
-    "coilsConductivity" : 58100000,
+    "coilsCond"         : 58100000,
+    "coilsThermalCond"  : 401,
+    "coilsDensity"      : 8960,
     "refTemp"           : 20,
     "maxU"              : 84,
     "maxI"              : 400,
-    "wireLength"        : 80.4
+    "wireLength"        : 80.4,
+    "wireArea"          : 0.000008
 }
