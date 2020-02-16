@@ -13,9 +13,13 @@ clear; clc; close all;
 verbose = false;
 displayPlots = false;
 
-%% Check for temporary folder
+%% Check for temporary folders
 if ~exist('lookupTables/temp','dir')
     mkdir('lookupTables/temp');
+end
+
+if ~exist('output','dir')
+    mkdir('output');
 end
 
 %% Parameters
@@ -26,7 +30,7 @@ parameters = loadParameters();
 parameters.forceLookupTable = generateForceLookupTable(displayPlots);
 
 % Generate lookup table for magnetic braking force
-brakeTable = dlmread('lookupTables/brakeTable.txt','',5,0);
+brakeTable = xlsread('lookupTables/MAGBRAKES_20-02-04.xlsx');
 brakeTable = brakeTable(:,1:2);
 
 % Generate brake force and brake distance interpolants

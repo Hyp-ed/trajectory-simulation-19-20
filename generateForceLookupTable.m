@@ -6,10 +6,10 @@ function forceLookupTable = generateForceLookupTable(generateFigures)
 fprintf("Generating force lookup table ...\n")
 
 % Input and output file name variable
-inFile      = './lookupTables/20-01-12_COMPACT_600mm_300A.xlsx';
-outTable    = './lookupTables/temp/forceLookupTable.mat';
-outCoeff    = './lookupTables/temp/optimalSlipsCoefficients.mat';
-outFig      = './lookupTables/temp/forceLookupTablePlot.fig';
+inFile      = './lookupTables/DSLIM_20-01-12_COMPACT_600mm_parallel_300A.xlsx';
+outTable    = './lookupTables/temp/DSLIM_lookup_table.mat';
+outFig      = './lookupTables/temp/DSLIM_lookup_table_plot.fig';
+outCoeff    = './lookupTables/temp/DSLIM_optimal_freq_coef.mat';
 
 % Import data
 fprintf("- reading input data ...\n")
