@@ -1,6 +1,5 @@
 function inter = getBrakingDistInterpolant(param,brakeTable)
-%GENERATEBRAKEDISTINTER Summary of this function goes here
-%   Detailed explanation goes here
+%GENERATEBRAKINGDISTINTERPOLANT Sets up an interpolant for the braking distance
 
 fprintf('Setting up braking distance interpolator (assuming max speed = %dm/s)\n', param.maxV)
 
