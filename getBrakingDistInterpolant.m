@@ -13,8 +13,8 @@ for i = 1:length(velList)
    v = velList(i);
    x = 0;
    while v > 0
-       brakingForce = calcBrakingForce(v,param);
-       acceleration = brakingForce / param.mass;
+       brakesForce = calcBrakesForce(v,param);
+       acceleration = brakesForce / param.mass;
        v = v + acceleration*dt;
        x = x + v*dt;
    end

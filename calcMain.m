@@ -12,32 +12,34 @@ function state = calcMain(parameters, state, i)
         case 1 % Acceleration
             % Calculations assume optimal frequency
             state.frequency(i)      = calcOptimalFrequency(state.velocity(i - 1), parameters);
-            state.phase(i)          = state.phase(i - 1) + 2 * pi * state.frequency(i) * parameters.dt;
-            
             state.coilsPowerLoss(i) = calcCoilsPowerLoss(state.current(i - 1), state.resistance(i - 1), state.frequency(i), parameters);
-            [state.coilsTemp(i) state.coreTemp(i)] = calcTemperature(parameters, state, i);
-            
-            state.resistance(i)     = calcResistance(parameters, state.coilsTemp(i));
-            state.current(i)        = parameters.maxU / state.resistance(i);
-            if (state.current(i) > parameters.maxI)
-                state.current(i) = parameters.maxI;
-            end
-            state.voltage(i)        = state.current(i) * state.resistance(i);
-
-            state.DSLIMForce(i)     = calcFx(state.frequency(i), state.velocity(i - 1), parameters);
-            state.brakesForce(i)    = 0;
         case 2 % Deceleration using EmBrakes            
             state.frequency(i)      = 0;
-            state.DSLIMForce(i)     = 0;
-            state.brakesForce(i)    = calcBrakingForce(state.velocity(i-1), parameters);  
-            state.phase(i)          = state.phase(i - 1);
-            state.powerLoss(i)      = 0;
+            state.coilsPowerLoss(i) = 0;
         case 3 % Max frequency
             state.frequency(i)      = parameters.maxFrequency;
-            state.DSLIMForce(i)     = calcFx(state.frequency(i), state.velocity(i - 1), parameters);
-            state.brakesForce(i)    = 0;
-            state.phase(i)          = state.phase(i - 1) + 2 * pi * state.frequency(i) * parameters.dt;
-            state.powerLoss(i)      = calcPl(state.frequency(i), state.velocity(i - 1), parameters);
+            state.coilsPowerLoss(i) = calcCoilsPowerLoss(state.current(i - 1), state.resistance(i - 1), state.frequency(i), parameters);
+    end
+
+    % Calculate temperature and coils resistance
+    [state.coilsTemp(i) state.coreTemp(i)] = calcTemperature(parameters, state, i);
+    state.resistance(i)     = calcResistance(parameters, state.coilsTemp(i));
+    
+    % More state-specific variables
+    if (state.mode == 1 || state.mode == 3)
+        state.voltage(i)        = parameters.maxU;
+        state.current(i)        = state.voltage(i) / state.resistance(i);
+        if (state.current(i) > parameters.maxI)
+            state.current(i) = parameters.maxI;
+            state.voltage(i) = state.current(i) * state.resistance(i);
+        end
+        state.DSLIMForce(i)  = calcFx(state.frequency(i), state.velocity(i - 1), parameters);
+        state.brakesForce(i) = 0;
+    elseif (state.mode == 2)
+        state.voltage(i) = 0;
+        state.current(i) = 0;
+        state.DSLIMForce(i)  = 0;
+        state.brakesForce(i) = calcBrakesForce(state.velocity(i-1), parameters);  
     end
 
     % Calculate air drag
@@ -52,8 +54,9 @@ function state = calcMain(parameters, state, i)
     % Calculate acceleration
     state.acceleration(i) = state.fx(i) / parameters.mass;
     
-    % Calculate velocity and distance
+    % Calculate velocity, phase and distance
     state.velocity(i) = state.velocity(i - 1) + parameters.dt * state.acceleration(i);
+    state.phase(i)    = state.phase(i - 1) + 2 * pi * state.frequency(i) * parameters.dt;
     state.distance(i) = state.distance(i - 1) + parameters.dt * state.velocity(i);
     
     % Calculate power and efficiency
