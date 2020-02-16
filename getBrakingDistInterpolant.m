@@ -1,14 +1,12 @@
-function inter = generateBrakeDistInter(param,brakeTable)
-%GENERATEBRAKEDISTINTER Summary of this function goes here
-%   Detailed explanation goes here
+function inter = getBrakingDistInterpolant(param,brakeTable)
+%GENERATEBRAKINGDISTINTERPOLANT Sets up an interpolant for the braking distance
 
-display('- generating braking distance interpolator (assuming max speed = 50m/s)')
+fprintf('Setting up braking distance interpolator (assuming max speed = %dm/s)\n', param.maxV)
 
-maxV = 50;
-vSteps = 1000;
+vSteps = 100;
 dt = param.dt;
 
-velList = linspace(0,maxV,vSteps);
+velList = linspace(0, param.maxV, vSteps);
 dist = zeros(1,length(velList)); 
 
 for i = 1:length(velList)

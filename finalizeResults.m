@@ -1,4 +1,4 @@
-function [ results ] = finalizeResults(maxIndex, time, distance, velocity, velocitySync, acceleration, phase, frequency, fx, power, powerLoss, powerInput, efficiency, slip)
+function results = finalizeResults(maxIndex, state)
 % finalizeResults  Truncates trajectory arrays and creates acceleration results structure
 % Inputs:
 %   maxIndex        Last used index in results arrays 
@@ -23,19 +23,20 @@ function [ results ] = finalizeResults(maxIndex, time, distance, velocity, veloc
 
     % Create results structure while truncating each array up to 'maxIndex'
     results = struct;
-    results.time            = time(1:maxIndex);
-    results.distance        = distance(1:maxIndex);
-    results.velocity        = velocity(1: maxIndex);
-    results.velocitySync    = velocitySync(1: maxIndex);
-    results.acceleration    = acceleration(1:maxIndex);
-    results.phase           = phase(1:maxIndex);
-    results.frequency       = frequency(1:maxIndex);
-    results.fx              = fx(1:maxIndex);
-    results.power           = power(1:maxIndex);
-    results.powerLoss       = powerLoss(1:maxIndex);
-    results.powerInput      = powerInput(1:maxIndex);
-    results.efficiency      = efficiency(1:maxIndex);
-    results.slip            = slip(1:maxIndex);
+    results.time            = state.time(1:maxIndex);
+    results.distance        = state.distance(1:maxIndex);
+    results.velocity        = state.velocity(1: maxIndex);
+    results.velocitySync    = state.velocitySync(1: maxIndex);
+    results.acceleration    = state.acceleration(1:maxIndex);
+    results.phase           = state.phase(1:maxIndex);
+    results.frequency       = state.frequency(1:maxIndex);
+    results.DSLIMForce      = state.DSLIMForce(1:maxIndex);
+    results.brakesForce     = state.brakesForce(1:maxIndex);
+    results.fx              = state.fx(1:maxIndex);
+    results.power           = state.power(1:maxIndex);
+    results.powerLoss       = state.powerLoss(1:maxIndex);
+    results.powerInput      = state.powerInput(1:maxIndex);
+    results.efficiency      = state.efficiency(1:maxIndex);
+    results.slip            = state.slip(1:maxIndex);
 
 end
-

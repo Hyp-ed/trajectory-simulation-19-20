@@ -40,5 +40,5 @@ function plotTrajectory(result)
     plot(ax5, result.time, result.slip); axis tight; ylim([0 1.2]); title('Slip vs. Time'); ylabel('Slip'); xlabel('Time [s]');
     ax6 = subplot(1, 6, 6);
     plot(ax6, result.time, result.powerInput); axis tight; ylim([0 20000]); title('Power input vs. Time'); ylabel('Power input [W]'); xlabel('Time [s]');
-    savefig('trajectoryPlot');
+    savefig('output/trajectoryPlot');
 end
